@@ -8,12 +8,10 @@
 /// \param delta is the voxel spacing in all directions
 /// \param numiters is the number of iterations to perform
 /// \param numcores is the number of CPU cores to use.  If 0, an optimal number is chosen
-/// \return 0 on success.
-int poisson_dirichlet (double * __restrict__ source, double *__restrict__ potential,
-                       unsigned int xsize,  unsigned int ysize, unsigned int zsize,
-                       double delta, unsigned int numiters, unsigned int numcores)
+void poisson_dirichlet (double * __restrict__ source,
+                        double * __restrict__ potential,
+                        unsigned int xsize, unsigned int ysize, unsigned int zsize, double delta,
+                        unsigned int numiters, unsigned int numcores)
 {
     // source[i, j, k] is accessed with source[((k * ysize) + j) * xsize + i]
-    
-    return 0;
 }

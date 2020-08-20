@@ -1,6 +1,8 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage{url}
 \usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
 
 \input maths
 
@@ -30,8 +32,9 @@
 
 \begin{document}
 
-\title{ \bf ENEL464 Embedded Software and Advanced Computing 2019 \\ Group Assignment 2}
-\author{Michael Hayes}
+\title{ \bf ENEL464 Embedded Software and Advanced Computing 2020 \\ Group Assignment 2}
+\author{}
+%\author{Michael Hayes}
 \date{}
 \maketitle
 
@@ -58,7 +61,8 @@ The discrete form of Poisson's equation,
   \nabla^2 V_{i,j,k,n} = f_{i,j,k,n},
 \end{equation}
 %
-can be solved iteratively using Jacobi relaxation, where
+can be solved iteratively, at each time-step $n$, using Jacobi
+relaxation, where
 %
 \begin{equation}
   V_{i,j,k,n+1} = \frac{1}{6}\encp{V_{i+1,j,k,n} + V_{i-1,j,k,n} + V_{i,j+1,k,n} + V_{i,j-1,k,n} + V_{i,j,k+1,n} + V_{i,j,k-1,n} - \Delta^2 f_{i,j,k}}.
@@ -70,18 +74,24 @@ voxels in metres, $0 \le i < N$, $0 \le j < N$, and $0 \le k < N$.
 Voxels on the boundary ($i = -1$, $i=N$, $j = -1$, $j=N$, $k = -1$,
 $k=N$) have a value $V_{\mathrm{bound}}$.  This is a Dirichlet
 boundary condition, equivalent to enclosing the problem in a metal box
-at potential $V_{\mathrm{bound}}$.
+at potential $V_{\mathrm{bound}}$.  You might recognise
+(\ref{eqn:Jacobi}) as 3-D convolution at each time-step.
 
 \section{Implementation}
 
 Implement an algorithm for Jacobi relaxation in either C or C++.  Your
-goal is to find a fast implementation that will run on a CAE lab
-computer, making best use of the caches and multiple cores.
+goal is to find a fast implementation that will run on your (or a CAE
+lab) computer, making best use of the caches and multiple cores.
 
 Your implementation needs to work with an arbitrary 3-D source
-distribution $f$.  The potential $V$ needs to be stored as a double
-data type.
+distribution $f$ and use the specified API below:
 
+
+\lstset{language=C}
+\lstset{basicstyle=\ttfamily\small}
+\lstset{keywordstyle=\color{black}\ttfamily}
+\lstset{breaklines}
+\lstinputlisting{../src/poisson.cpp}
 
 
 \section{Testing}
@@ -113,35 +123,55 @@ answered.  Emails will be quietly ignored.
 
 \section{Reports}
 
-The reports are to be submitted as PDF documents through the ENCE464
-Learn page.  They will be submitted to TurnItIn for plagiarism
-checking.
+The reports are group reports and are to be submitted as PDF documents
+through the ENCE464 Learn page.  They will be submitted to TurnItIn
+for plagiarism checking.
 
 Guidelines for writing a report are available at\\
 \url{https://eng-git.canterbury.ac.nz/mph/report-guidelines/blob/master/report-guidelines.pdf}.
 
-Each report is to use a 12 point font and be no longer than four
-pages, including appendices.
+Each report is to use a 12 point font and be no longer than five
+pages, including appendices.  Please use margins of at least 2\,cm.
 
 %Ensure in your report that you discuss your implementation in terms of
 %cache usage and core usage.  You should present profiling information
 %showing which parts of your program takes the most time to execute.
 
+\section{Assessment}
+
 Your report will be marked in terms of:
 %
 \begin{itemize}
-\item Written style
-\item Presentation
-\item Cache analysis
-\item Multithreading analysis
-\item Profiling analysis 
-\item Optimisation analysis
-\item Overall excellence  
+\item Written style.  The writing should be concise technical writing.
+\item Presentation.  The key here is consistency and clear diagrams
+  and graphs.
+\item Architecture overview.  This should describe your computer's
+  architecture (such as the cache organisation, memory size, CPU,
+  etc.).
+\item Cache analysis.  This should discuss how your program takes
+  advantage of the cache.  
+\item Multithreading analysis.  This should discuss how your program
+  takes advantage of multiple threads.
+\item Profiling analysis.  This should show which parts of your program take the most time.
+\item Optimisation analysis.  This should discuss the affects of some
+  of the compiler optimisations, such as loop unrolling, on your
+  program.
+\item Overall excellence.
 \end{itemize}
+%
+Each section is marked out of 5, giving a total of 40 marks.  Five
+bonus marks will be awarded to any group who can beat our program when
+running on a CAE lab computer and give the correct results.
 
-Your report should present the average time and standard deviation of
-the time to run 500 iterations of your implementation for $N=101, 201,
-301, 401, 501, 601, 701, 801, 901$.
+Your report should present the statistics for the time your program
+takes to run for the following problem sizes: $N=101, 201, 301, 401,
+501, 601, 701, 801, 901$.  For $N=801$ and $N=901$, do not worry about
+performing many trials.  If you have a really old computer, you can
+skip $N=901$.
+
+Your analyses should be backed up with experimental evidence, such as
+the output from profiling tools.
+
 
 %% Bonus marks will be awarded for implementations that handle Neumann
 %% boundary conditions on each boundary.  This is equivalent to an
