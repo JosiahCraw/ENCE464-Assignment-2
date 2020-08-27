@@ -42,8 +42,11 @@
 \section{Introduction}
 
 The purpose of this assignment is to implement a numerical algorithm
-on a computer to make the most efficient use of its caches and
-multiple cores.
+on a computer to make the most efficient use of its caches and cores.
+You will find that you will get a large variation in program
+performance depending on how you implement your code and use compiler
+optimisations.  A knowledge of computer architecture should help with
+this!
 
 The algorithm is Jacobi relaxation.  This is an iterative algorithm
 used to approximate differential equations, for example, Poisson's and
@@ -52,7 +55,6 @@ electric potential given a specified charge distribution or
 temperature given a specified heat source.  There are more efficient
 ways to solve this problem using Green's functions and Fourier
 transforms but that is not the purpose of this assignment.
-
 
 \section{Jacobi relaxation}
 
@@ -76,12 +78,12 @@ Voxels on the boundary ($i = -1$, $i=N$, $j = -1$, $j=N$, $k = -1$,
 $k=N$) have a value $V_{\mathrm{bound}}$.  This is a Dirichlet
 boundary condition, equivalent to enclosing the problem in a metal box
 at potential $V_{\mathrm{bound}}$.  You might recognise
-(\ref{eqn:Jacobi}) as 3-D convolution at each time-step.
+(\ref{eqn:Jacobi}) as a 3-D discrete convolution at each time-step.
 
 
 \section{Implementation}
 
-Implement an algorithm for Jacobi relaxation in either C or C++.  Your
+Your program to solve (\ref{eqn:Jacobi}) must either use C or C++.  Your
 goal is to find a fast implementation that will run on your (or a CAE
 lab) computer, making best use of the caches and multiple cores.
 
@@ -150,7 +152,7 @@ Your report will be marked in terms of:
 \item Presentation.  The key here is consistency and clear diagrams
   and graphs.
 \item Architecture overview.  This should describe your computer's
-  architecture (such as the cache organisation, memory size, CPU,
+  architecture (such as the cache organisation, memory size, CPU model,
   etc.).
 \item Cache analysis.  This should discuss how your program takes
   advantage of the cache.  

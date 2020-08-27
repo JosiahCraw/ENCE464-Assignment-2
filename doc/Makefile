@@ -1,6 +1,7 @@
-all: assignment.pdf
+all: instructions.pdf
 
 %.pdf: %.tex
+	pdflatex $*
 	pdflatex $*
 
 clean:
