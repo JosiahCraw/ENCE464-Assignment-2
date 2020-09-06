@@ -1,4 +1,4 @@
-The assignment instructions are [here](https://eng-git.canterbury.ac.nz/mph/ence464-assignment-2020/blob/master/doc/assignment.pdf).
+The assignment instructions are [here](https://eng-git.canterbury.ac.nz/mph/ence464-assignment-2020/blob/master/doc/instructions.pdf).
 
 Example test code is
 [here](https://eng-git.canterbury.ac.nz/mph/ence464-assignment-2020/blob/master/src/poisson_test.cpp).
