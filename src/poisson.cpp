@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
 /// Solve Poisson's equation for a rectangular box with Dirichlet
 /// boundary conditions on each face.
 /// \param source is a pointer to a flattened 3-D array for the source function
@@ -17,4 +21,43 @@ void poisson_dirichlet (double * __restrict__ source,
 {
     // source[i, j, k] is accessed with source[((k * ysize) + j) * xsize + i]
     // potential[i, j, k] is accessed with potential[((k * ysize) + j) * xsize + i]    
+    int size = ysize * zsize * xsize * sizeof(double);
+	double *input = (double *)malloc(size);
+	if (!input) {
+		fprintf(stderr, "malloc failure\n");
+		return;
+	}
+	memcpy(input, source, size);
+	for (unsigned int iter = 0; iter < numiters; iter++) {
+		for (unsigned int x = 0; x < xsize; x++) {
+			for (unsigned int z = 0; z < zsize; z++) {
+				for (unsigned int y = 0; y < ysize; y++) {
+					double res = 0;
+
+					if (x < xsize - 1)
+						res += input[((z * ysize) + y) * xsize + (x + 1)];
+					if (x > 0)
+						res += input[((z * ysize) + y) * xsize + (x - 1)];
+
+					if (y < ysize - 1)
+						res += input[((z * ysize) + (y + 1)) * xsize + x];
+					if (y > 0)
+						res += input[((z * ysize) + (y - 1)) * xsize + x];
+
+					if (z < zsize - 1)
+						res += input[(((z + 1) * ysize) + y) * xsize + x];
+					if (z > 0)
+						res += input[(((z - 1) * ysize) + y) * xsize + x];
+
+					res -= delta * delta * source[((z * ysize) + y) * xsize + x];
+
+					res /= 6;
+
+					potential[((z * ysize) + y) * xsize + x] = res;
+				}
+			}
+		}
+		memcpy(input, potential, size);
+	}
+	free(input);
 }
