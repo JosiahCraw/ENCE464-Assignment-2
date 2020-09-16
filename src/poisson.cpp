@@ -21,7 +21,7 @@ void poisson_dirichlet (double * __restrict__ source,
 {
     // source[i, j, k] is accessed with source[((k * ysize) + j) * xsize + i]
     // potential[i, j, k] is accessed with potential[((k * ysize) + j) * xsize + i]    
-    int size = ysize * zsize * xsize * sizeof(double);
+    long size = ysize * zsize * xsize * sizeof(double);
 	double *input = (double *)malloc(size);
 	if (!input) {
 		fprintf(stderr, "malloc failure\n");
