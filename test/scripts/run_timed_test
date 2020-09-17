@@ -1,0 +1,89 @@
+if [ $1 -gt 0 ]
+then
+    echo "Running Test 1: (101, 10)"
+    echo "#------------------#"
+
+    time ./timed_test 101 10
+    echo ""
+    echo "#------------------#"
+fi
+
+if [ $1 -gt 1 ]
+then
+    echo "Running Test 2: (201, 10)"
+    echo "#------------------#"
+
+    time ./timed_test 201 10
+    echo ""
+    echo "#------------------#"
+fi
+
+if [ $1 -gt 2 ]
+then
+    echo "Running Test 3: (301, 10)"
+    echo "#------------------#"
+
+    time ./timed_test 301 10
+    echo ""
+    echo "#------------------#"
+fi
+
+if [ $1 -gt 3 ]
+then
+    echo "Running Test 4: (401, 10)"
+    echo "#------------------#"
+
+    time ./timed_test 401 10
+    echo ""
+    echo "#------------------#"
+fi
+
+if [ $1 -gt 4 ]
+then
+    echo "Running Test 5: (501, 10)"
+    echo "#------------------#"
+
+    time ./timed_test 501 10
+    echo ""
+    echo "#------------------#"
+fi
+
+if [ $1 -gt 5 ]
+then
+    echo "Running Test 6: (601, 10)"
+    echo "#------------------#"
+
+    time ./timed_test 601 10
+    echo ""
+    echo "#------------------#"
+fi
+
+if [ $1 -gt 6 ]
+then
+    echo "Running Test 7: (701, 10)"
+    echo "#------------------#"
+
+    time ./timed_test 701 10
+    echo ""
+    echo "#------------------#"
+fi
+
+if [ $1 -gt 7 ]
+then
+    echo "Running Test 8: (801, 10)"
+    echo "#------------------#"
+
+    time ./timed_test 801 10
+    echo ""
+    echo "#------------------#"
+fi
+
+if [ $1 -gt 8 ]
+then
+    echo "Running Test 9: (901, 10)"
+    echo "#------------------#"
+
+    time ./timed_test 901 10
+    echo ""
+    echo "#------------------#"
+fi

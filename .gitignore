@@ -1,4 +1,5 @@
 test/poisson_test
+test/timed_test
 src/poisson
 *.o
 *.out

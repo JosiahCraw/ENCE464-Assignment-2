@@ -1,0 +1,2 @@
+scp timed_test $2@linux.cosc.canterbury.ac.nz:.
+ssh -o "StrictHostKeyChecking=no" $2@linux.cosc.canterbury.ac.nz ssh -o "StrictHostKeyChecking=no" $2@$1 "lscpu && time ./timed_test $3 $4 && rm timed_test"
