@@ -3,12 +3,16 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "poisson.hpp"
+#include <assert.h>
+#include "example/demo_poisson.h"
+#include "../src/poisson.h"
 
 int main (int argc, char *argv[])
 {
+    double *demo_potential;
     double *source;
     double *potential;
+
     unsigned int N;
     unsigned int numiters;
     unsigned int numcores;    
@@ -37,11 +41,19 @@ int main (int argc, char *argv[])
 
     source = (double *)calloc(xsize * ysize * zsize, sizeof(*source));
     potential = (double *)calloc(xsize * ysize * zsize, sizeof(*potential));
+    demo_potential = (double *)calloc(xsize * ysize * zsize, sizeof(*potential));
 
     source[((zsize / 2 * ysize) + ysize / 2) * xsize + xsize / 2] = 1.0;    
     
     poisson_dirichlet(source, potential, 0, xsize, ysize, zsize, delta,
                       numiters, numcores);
+
+    demo_poisson_dirichlet(source, demo_potential, 0, xsize, ysize, zsize, delta,
+                      numiters, numcores);
+    
+    for (int i=0; i<(xsize * ysize * zsize); i++) {
+        assert(*(potential+i) == *(demo_potential+i));
+    } 
 
     return 0;
 }

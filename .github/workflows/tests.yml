@@ -1,0 +1,17 @@
+name: tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: gcc:10
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Runs Tests
+        run: cd test && make all
