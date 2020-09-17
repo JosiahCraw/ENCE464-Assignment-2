@@ -1,0 +1,5 @@
+test/poisson_test
+src/poisson
+*.o
+*.out
+*.pdf
