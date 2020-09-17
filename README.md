@@ -17,11 +17,12 @@ user@linux:~$ make looong_test
 ```
 
 ## TODO
-    - [ ] Timed testing
-    - [ ] Timed testing on remote computer (for consistency)
-    - [ ] Optimise out the `if` statements
-    - [ ] Add threading
-    - [ ] Add GPU Support (Optional)
+
+- [ ] Timed testing
+- [ ] Timed testing on remote computer (for consistency)
+- [ ] Optimise out the `if` statements
+- [ ] Add threading
+- [ ] Add GPU Support (Optional)
  
 ## Authors
 Jos Craw <jcr124@uclive.ac.nz>
