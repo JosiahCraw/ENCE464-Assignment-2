@@ -21,7 +21,7 @@ void demo_poisson_dirichlet (double * __restrict__ source,
 {
     // source[i, j, k] is accessed with source[((k * ysize) + j) * xsize + i]
     // potential[i, j, k] is accessed with potential[((k * ysize) + j) * xsize + i]    
-    long size = ysize * zsize * xsize * sizeof(double);
+    size_t size = (size_t)ysize * zsize * xsize * sizeof(double);
 	double *input = (double *)malloc(size);
 	if (!input) {
 		fprintf(stderr, "malloc failure\n");
@@ -36,18 +36,30 @@ void demo_poisson_dirichlet (double * __restrict__ source,
 
 					if (x < xsize - 1)
 						res += input[((z * ysize) + y) * xsize + (x + 1)];
+					else
+						res += Vbound;
 					if (x > 0)
 						res += input[((z * ysize) + y) * xsize + (x - 1)];
+					else
+						res += Vbound;
 
 					if (y < ysize - 1)
 						res += input[((z * ysize) + (y + 1)) * xsize + x];
+					else
+						res += Vbound;
 					if (y > 0)
 						res += input[((z * ysize) + (y - 1)) * xsize + x];
+					else
+						res += Vbound;
 
 					if (z < zsize - 1)
 						res += input[(((z + 1) * ysize) + y) * xsize + x];
+					else
+						res += Vbound;
 					if (z > 0)
 						res += input[(((z - 1) * ysize) + y) * xsize + x];
+					else
+						res += Vbound;
 
 					res -= delta * delta * source[((z * ysize) + y) * xsize + x];
 

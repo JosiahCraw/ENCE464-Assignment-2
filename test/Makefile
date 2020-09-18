@@ -1,8 +1,5 @@
 all: quick_test
 
-check_defined = \
-    
-
 build: poisson_test.c example/demo_poisson.c ../src/poisson.c
 	gcc -O3 -std=c99 -Wall -g3 -o poisson_test $^
 
