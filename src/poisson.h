@@ -9,7 +9,4 @@ void poisson_dirichlet (double *__restrict__ source,
                         unsigned int xsize, unsigned int ysize, unsigned int zsize,
                         double delta, unsigned int maxiters, unsigned int numcores);
 
-#undef true
-#define true 0
-
 #endif
