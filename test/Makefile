@@ -1,7 +1,7 @@
 all: quick_test
 
 build: poisson_test.c example/demo_poisson.c ../src/poisson.c
-	gcc -O3 -std=c99 -Wall -g3 -o poisson_test $^
+	gcc -O3 -std=c99 -Wall -g3 -o poisson_test $^ -lcrypto -lssl
 
 build_timed: timed_test.c ../src/poisson.c
 	gcc -O3 -std=c99 -Wall -g3 -o timed_test $^
