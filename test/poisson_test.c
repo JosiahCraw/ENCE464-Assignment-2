@@ -77,7 +77,7 @@ int main (int argc, char *argv[])
     MD5_Init(&md5_demo);
 
     // Hash the First run
-    char hash[MD5_DIGEST_LENGTH];
+    unsigned char hash[MD5_DIGEST_LENGTH];
     MD5_Update(&md5, potential, potential_size);
     MD5_Final(hash, &md5);
 
@@ -91,12 +91,12 @@ int main (int argc, char *argv[])
                       numiters, numcores);
 
     // Hash the second run
-    char demo_hash[MD5_DIGEST_LENGTH];
+    unsigned char demo_hash[MD5_DIGEST_LENGTH];
     MD5_Update(&md5_demo, potential, potential_size);
     MD5_Final(demo_hash, &md5_demo);
 
     // Check the hashes are equal
-    assert(!strcmp(hash, demo_hash));
+    assert(!memcmp(hash, demo_hash, MD5_DIGEST_LENGTH));
 
     return 0;
 }
