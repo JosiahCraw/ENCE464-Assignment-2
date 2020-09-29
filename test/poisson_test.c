@@ -84,6 +84,7 @@ int main (int argc, char *argv[])
     // Reset the variables
     memset(potential, 0, potential_size);
     memset(source, 0, potential_size);
+    source[((zsize / 2 * ysize) + ysize / 2) * xsize + xsize / 2] = 1.0;
 
     // Run the Demo implementation
     demo_poisson_dirichlet(source, potential, 0, xsize, ysize, zsize, delta,

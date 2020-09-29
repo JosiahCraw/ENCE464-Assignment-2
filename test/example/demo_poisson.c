@@ -19,7 +19,7 @@ void demo_poisson_dirichlet (double * __restrict__ source,
                         unsigned int xsize, unsigned int ysize, unsigned int zsize, double delta,
                         unsigned int numiters, unsigned int numcores)
 {
-    // source[i, j, k] is accessed with source[((k * ysize) + j) * xsize + i]
+// source[i, j, k] is accessed with source[((k * ysize) + j) * xsize + i]
     // potential[i, j, k] is accessed with potential[((k * ysize) + j) * xsize + i]    
     size_t size = (size_t)ysize * zsize * xsize * sizeof(double);
 	double *input = (double *)malloc(size);
