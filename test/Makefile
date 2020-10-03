@@ -8,7 +8,7 @@ build_timed: timed_test.c ../src/poisson.c
 
 quick_test: build
 	@echo Running Test...
-	./poisson_test 201 10
+	./poisson_test 501 100
 	rm poisson_test
 	@echo Test Passed!
 
@@ -18,17 +18,16 @@ looong_test: build
 	rm poisson_test
 	@echo Test Passed!
 
-timed_test_%: build_timed
+timed_test: build_timed
 	@echo Running Timed Test...
-	./scripts/run_timed_test $*
+	./scripts/run_timed_test $(N)
 	rm timed_test
 	@echo Timed Test Complete!
 
-run_remote_test_%: build_timed
+run_remote_test: build_timed
 	@echo Running Test Remotely...
-	./scripts/remote_test $(host) $(user) $* 10
+	./scripts/remote_test $(host) $(user) $(N) $(iter)
 	@echo Finished Running Remote Test!
 
 clean:
-	rm poisson_test
-	rm timed_test
+	rm poisson_test timed_test
