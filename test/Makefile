@@ -30,5 +30,4 @@ run_remote_test_%: build_timed
 	@echo Finished Running Remote Test!
 
 clean:
-	rm poisson_test
-	rm timed_test
+	rm poisson_test timed_test comp_test

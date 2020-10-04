@@ -1,6 +1,7 @@
-test/poisson_test
-test/timed_test
-src/poisson
+poisson_test
+timed_test
+poisson
+comp_test
 *.o
 *.out
 *.pdf
