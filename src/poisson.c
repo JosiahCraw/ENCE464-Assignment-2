@@ -6,61 +6,6 @@
 #include "poisson.h"
 #include "poisson_macros.h"
 
-void poisson_task (void* arg)
-{
-	poisson_cfg_t* cfg = (poisson_cfg_t*)arg;
-	double *source = cfg->source;
-    double *potential = cfg->potential;
-	double *input = cfg->input;
-    double Vbound = cfg->Vbound;
-    unsigned int xsize = cfg->xsize;
-    unsigned int ysize = cfg->ysize;
-    unsigned int zsize = cfg->zsize;
-    double delta = cfg->delta;
-	/*
-	* Macro expansion for no boundary conditions
-	*/
-	XYZ
-
-	/*
-	* Macro expansion for Z boundary conditions
-	*/
-	XY_Z
-
-	/*
-	* Macro expansion for Y boundary conditions
-	*/
-	X_YZ
-
-	/*
-	* Macro expansion for Y, Z boundary conditions
-	*/
-	X_Y_Z
-
-	/*
-	* Macro expansion for X boundary conditions
-	*/
-	_XYZ
-
-	/*
-	* Macro expansion for X, Z boundary conditions
-	*/
-	_XY_Z
-
-	/*
-	* Macro expansion for X, Y boundary conditions
-	*/
-	_X_YZ
-
-	/*
-	* Macro expansion for X, Y, Z boundary conditions
-	*/
-	_X_Y_Z
-
-	// free(cfg);
-
-}
-
 /// Solve Poisson's equation for a rectangular box with Dirichlet
 /// boundary conditions on each face.
 /// \param source is a pointer to a flattened 3-D array for the source function
