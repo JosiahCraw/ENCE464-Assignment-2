@@ -21,7 +21,7 @@ user@linux:~$ make timed_test N=2
 
 # To run a timed test on just the optimised code on a remote machine:
 user@linux:~$ make run_remote_test_201 host=cs19119bs user=jcr124 n=501 iter=20
-# This will run the test with a size of 201 and 10 iterations
+# This will run the test with a size of 501 and 20 iterations
 ```
 
 ## TODO

@@ -4,7 +4,7 @@ on:
     paths:
       - '**/report.tex'
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     container: blang/latex:ctanfull
     steps:

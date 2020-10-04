@@ -1,6 +1,65 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <pthread.h>
+
+#include "poisson.h"
+#include "poisson_macros.h"
+
+void poisson_task (void* arg)
+{
+	poisson_cfg_t* cfg = (poisson_cfg_t*)arg;
+	double *source = cfg->source;
+    double *potential = cfg->potential;
+	double *input = cfg->input;
+    double Vbound = cfg->Vbound;
+    unsigned int xsize = cfg->xsize;
+    unsigned int ysize = cfg->ysize;
+    unsigned int zsize = cfg->zsize;
+    double delta = cfg->delta;
+	/*
+	* Macro expansion for no boundary conditions
+	*/
+	XYZ
+
+	/*
+	* Macro expansion for Z boundary conditions
+	*/
+	XY_Z
+
+	/*
+	* Macro expansion for Y boundary conditions
+	*/
+	X_YZ
+
+	/*
+	* Macro expansion for Y, Z boundary conditions
+	*/
+	X_Y_Z
+
+	/*
+	* Macro expansion for X boundary conditions
+	*/
+	_XYZ
+
+	/*
+	* Macro expansion for X, Z boundary conditions
+	*/
+	_XY_Z
+
+	/*
+	* Macro expansion for X, Y boundary conditions
+	*/
+	_X_YZ
+
+	/*
+	* Macro expansion for X, Y, Z boundary conditions
+	*/
+	_X_Y_Z
+
+	// free(cfg);
+
+}
 
 /// Solve Poisson's equation for a rectangular box with Dirichlet
 /// boundary conditions on each face.
@@ -19,56 +78,58 @@ void poisson_dirichlet (double * __restrict__ source,
                         unsigned int xsize, unsigned int ysize, unsigned int zsize, double delta,
                         unsigned int numiters, unsigned int numcores)
 {
-// source[i, j, k] is accessed with source[((k * ysize) + j) * xsize + i]
-    // potential[i, j, k] is accessed with potential[((k * ysize) + j) * xsize + i]    
     size_t size = (size_t)ysize * zsize * xsize * sizeof(double);
 	double *input = (double *)malloc(size);
 	if (!input) {
 		fprintf(stderr, "malloc failure\n");
 		return;
 	}
+
+	if (numcores == 0) {
+		numcores = 1;
+	}
 	memcpy(input, source, size);
 	for (unsigned int iter = 0; iter < numiters; iter++) {
-		for (unsigned int z = 0; z < zsize; z++) {
-			for (unsigned int y = 0; y < ysize; y++) {
-				for (unsigned int x = 0; x < xsize; x++) {
-					double res = 0;
+		/*
+		* Macro expansion for no boundary conditions
+		*/
+		XYZ
 
-					if (x < xsize - 1)
-						res += input[((z * ysize) + y) * xsize + (x + 1)];
-					else
-						res += Vbound;
-					if (x > 0)
-						res += input[((z * ysize) + y) * xsize + (x - 1)];
-					else
-						res += Vbound;
+		/*
+		* Macro expansion for Z boundary conditions
+		*/
+		XY_Z
 
-					if (y < ysize - 1)
-						res += input[((z * ysize) + (y + 1)) * xsize + x];
-					else
-						res += Vbound;
-					if (y > 0)
-						res += input[((z * ysize) + (y - 1)) * xsize + x];
-					else
-						res += Vbound;
+		/*
+		* Macro expansion for Y boundary conditions
+		*/
+		X_YZ
 
-					if (z < zsize - 1)
-						res += input[(((z + 1) * ysize) + y) * xsize + x];
-					else
-						res += Vbound;
-					if (z > 0)
-						res += input[(((z - 1) * ysize) + y) * xsize + x];
-					else
-						res += Vbound;
+		/*
+		* Macro expansion for Y, Z boundary conditions
+		*/
+		X_Y_Z
 
-					res -= delta * delta * source[((z * ysize) + y) * xsize + x];
+		/*
+		* Macro expansion for X boundary conditions
+		*/
+		_XYZ
 
-					res /= 6;
+		/*
+		* Macro expansion for X, Z boundary conditions
+		*/
+		_XY_Z
 
-					potential[((z * ysize) + y) * xsize + x] = res;
-				}
-			}
-		}
+		/*
+		* Macro expansion for X, Y boundary conditions
+		*/
+		_X_YZ
+
+		/*
+		* Macro expansion for X, Y, Z boundary conditions
+		*/
+		_X_Y_Z
+
 		memcpy(input, potential, size);
 	}
 	free(input);

@@ -1,17 +1,17 @@
 all: quick_test
 
 build: test/poisson_test.c test/example/demo_poisson.c src/poisson.c
-	gcc -O3 -std=c99 -Wall -g3 -o poisson_test $^ -lcrypto -lssl
+	gcc -O3 -std=c99 -Wall -g3 -o poisson_test $^ -lcrypto -lssl -lpthread
 
 build_comp: test/comprehensive_test.c test/example/demo_poisson.c src/poisson.c
-	gcc -O3 -std=c99 -Wall -g3 -o comp_test $^
+	gcc -O3 -std=c99 -Wall -g3 -o comp_test $^ -lpthread
 
 build_timed: test/timed_test.c src/poisson.c
-	gcc -O3 -std=c99 -Wall -g3 -o timed_test $^
+	gcc -O3 -std=c99 -Wall -g3 -o timed_test $^ -lpthread
 
 quick_test: build
 	@echo Running Test...
-	./poisson_test 11 5
+	./poisson_test 17 5 4
 	rm poisson_test
 	@echo Test Passed!
 
@@ -29,7 +29,7 @@ looong_test: build
 
 timed_test: build_timed
 	@echo Running Timed Test...
-	test/scripts/run_timed_test $(N)
+	test/scripts/run_timed_test $(N) $(iter)
 	rm timed_test
 	@echo Timed Test Complete!
 
