@@ -11,7 +11,7 @@ build_timed: test/timed_test.c src/poisson.c
 
 quick_test: build
 	@echo Running Test...
-	./poisson_test 17 5 4
+	./poisson_test 201 50
 	rm poisson_test
 	@echo Test Passed!
 
@@ -39,4 +39,4 @@ run_remote_test: build_timed
 	@echo Finished Running Remote Test!
 
 clean:
-	rm poisson_test timed_test
+	rm poisson_test timed_test comp_test

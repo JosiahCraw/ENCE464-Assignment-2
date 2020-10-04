@@ -36,43 +36,43 @@ void poisson_dirichlet (double * __restrict__ source,
 	memcpy(input, source, size);
 	for (unsigned int iter = 0; iter < numiters; iter++) {
 		/*
-		* Macro expansion for no boundary conditions
-		*/
+		 * Macro expansion for no boundary conditions
+		 */
 		XYZ
 
 		/*
-		* Macro expansion for Z boundary conditions
-		*/
+		 * Macro expansion for Z boundary conditions
+		 */
 		XY_Z
 
 		/*
-		* Macro expansion for Y boundary conditions
-		*/
+		 * Macro expansion for Y boundary conditions
+		 */
 		X_YZ
 
 		/*
-		* Macro expansion for Y, Z boundary conditions
-		*/
+		 * Macro expansion for Y, Z boundary conditions
+		 */
 		X_Y_Z
 
 		/*
-		* Macro expansion for X boundary conditions
-		*/
+		 * Macro expansion for X boundary conditions
+		 */
 		_XYZ
 
 		/*
-		* Macro expansion for X, Z boundary conditions
-		*/
+		 * Macro expansion for X, Z boundary conditions
+		 */
 		_XY_Z
 
 		/*
-		* Macro expansion for X, Y boundary conditions
-		*/
+		 * Macro expansion for X, Y boundary conditions
+		 */
 		_X_YZ
 
 		/*
-		* Macro expansion for X, Y, Z boundary conditions
-		*/
+		 * Macro expansion for X, Y, Z boundary conditions
+		 */
 		_X_Y_Z
 
 		memcpy(input, potential, size);
