@@ -1,0 +1,73 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+
+\usepackage[section]{placeins}
+\graphicspath{ {./img/} }
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\usepackage{chemformula}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{tabto}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage[section]{placeins}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{array}
+\usepackage{gensymb}
+\usepackage{array}
+\usetikzlibrary{shapes, arrows}
+
+% Document Parameters
+\newcommand\reportTitle{ENCE464 Assignment 2}
+\newcommand\subTitle{Jacobi Relaxation Optimasation}
+
+\newcommand\todo[1]{\textcolor{red}{#1}}
+
+
+% Figure Setup
+\tikzstyle{boxes} = [rectangle, minimum width=2cm, minimum height=1cm, text centered, text
+width=3cm, draw=black]
+
+\tikzstyle{diamond} = [diamond, minimum width=2cm, minimum height=1cm, text centred, text
+width=2cm, draw=black]
+
+\tikzstyle{line} = [thick, -, >=stealth]
+\tikzstyle{arrow} = [thick, ->, >=stealth]
+
+\author{{\LARGE Josiah Craw}\vspace{10pt}\\35046080\\jcr124@uclive.ac.nz\\}
+\title{\rule{\textwidth}{0.8pt} \\ {\huge \textbf{\reportTitle}}\\{\large \subTitle} \rule{\textwidth}{0.8pt}}
+\vspace{40pt}
+
+\begin{document}
+% Titlepage
+\maketitle
+\thispagestyle{empty}
+
+\newpage
+% Abstract/Executive Summary
+\pagenumbering{roman}
+
+\section*{Executive Summary}
+\addcontentsline{toc}{section}{Executive Summary}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+% Beginning of the report
+\pagenumbering{arabic}
+
+\newpage
+\medskip
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+
+\end{document}

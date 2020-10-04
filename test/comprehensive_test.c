@@ -29,6 +29,9 @@ int main (int argc, char *argv[])
     double *source;
     double *potential;
 
+    double *demo_source;
+    double *demo_potential;
+
     unsigned int N;
     unsigned int numiters;
     unsigned int numcores;    
@@ -60,43 +63,23 @@ int main (int argc, char *argv[])
     potential = (double *)calloc(xsize * ysize * zsize + 1, sizeof(*potential));
 
     source[((zsize / 2 * ysize) + ysize / 2) * xsize + xsize / 2] = 1.0;    
+
+    demo_source = (double *)calloc(xsize * ysize * zsize, sizeof(*source));
+    demo_potential = (double *)calloc(xsize * ysize * zsize + 1, sizeof(*potential));
+
+    demo_source[((zsize / 2 * ysize) + ysize / 2) * xsize + xsize / 2] = 1.0;    
     
     // Run the users implementation
     poisson_dirichlet(source, potential, 0.25, xsize, ysize, zsize, delta,
                       numiters, numcores);
 
-    // The size of the potential array, this is used later
-    size_t potential_size = xsize * ysize * zsize * sizeof(*source);
-
-    // Initalise the MD5 Hash
-    MD5_CTX md5;
-    MD5_CTX md5_demo;
-
-    // Init the MD5 Hash
-    MD5_Init(&md5);
-    MD5_Init(&md5_demo);
-
-    // Hash the First run
-    unsigned char hash[MD5_DIGEST_LENGTH];
-    MD5_Update(&md5, potential, potential_size);
-    MD5_Final(hash, &md5);
-
-    // Reset the variables
-    memset(potential, 0, potential_size);
-    memset(source, 0, potential_size);
-    source[((zsize / 2 * ysize) + ysize / 2) * xsize + xsize / 2] = 1.0;
-
     // Run the Demo implementation
-    demo_poisson_dirichlet(source, potential, 0.25, xsize, ysize, zsize, delta,
+    demo_poisson_dirichlet(demo_source, demo_potential, 0.25, xsize, ysize, zsize, delta,
                       numiters, numcores);
 
-    // Hash the second run
-    unsigned char demo_hash[MD5_DIGEST_LENGTH];
-    MD5_Update(&md5_demo, potential, potential_size);
-    MD5_Final(demo_hash, &md5_demo);
 
     // Check the hashes are equal
-    assert(!memcmp(hash, demo_hash, MD5_DIGEST_LENGTH));
+    assert(!memcmp(potential, demo_potential, xsize * ysize * zsize * sizeof(*source)));
 
     return 0;
 }

@@ -16,11 +16,11 @@ user@linux:~$ make all
 user@linux:~$ make looong_test
 
 # To run a timed test on just the optimised code eg.
-user@linux:~$ make timed_test_2
+user@linux:~$ make timed_test N=2
 # This will run tests 1 and 2 so the test
 
 # To run a timed test on just the optimised code on a remote machine:
-user@linux:~$ make run_remote_test_201 host=cs19119bs user=jcr124
+user@linux:~$ make run_remote_test_201 host=cs19119bs user=jcr124 n=501 iter=20
 # This will run the test with a size of 201 and 10 iterations
 ```
 
