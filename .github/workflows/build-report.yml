@@ -2,7 +2,7 @@ name: Build Report
 on:
   push:
     paths:
-      - 'report.tex'
+      - '**/report.tex'
 jobs:
   test:
     runs-on: ubuntu-latest
