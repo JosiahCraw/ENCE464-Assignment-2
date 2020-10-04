@@ -90,45 +90,33 @@ void poisson_dirichlet (double * __restrict__ source,
 	}
 	memcpy(input, source, size);
 	for (unsigned int iter = 0; iter < numiters; iter++) {
-		/*
-		* Macro expansion for no boundary conditions
-		*/
-		XYZ
+		pthread_t threads[numcores];
 
-		/*
-		* Macro expansion for Z boundary conditions
-		*/
-		XY_Z
+		unsigned int zslice = 0;
+		unsigned int deltaz = zsize / numcores;
 
-		/*
-		* Macro expansion for Y boundary conditions
-		*/
-		X_YZ
+		for (int t=0; t<numcores; t++) {
+			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
 
-		/*
-		* Macro expansion for Y, Z boundary conditions
-		*/
-		X_Y_Z
+			deltaz += (deltaz % numcores && t == numcores - 1) ? 1 : 0; 
+			printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
+			cfg->source = source + zslice * ysize * zsize;
+			cfg->potential = potential + zslice * ysize * zsize;
+			cfg->input = input + zslice * ysize * zsize;
+			cfg->Vbound = Vbound;
+			cfg->xsize = xsize;
+			cfg->ysize = ysize;
+			cfg->zsize = deltaz;
+			cfg->delta = delta;
 
-		/*
-		* Macro expansion for X boundary conditions
-		*/
-		_XYZ
+			zslice += deltaz;
 
-		/*
-		* Macro expansion for X, Z boundary conditions
-		*/
-		_XY_Z
+			pthread_create(&threads[t], NULL, poisson_task, (void*)cfg);
+		}
 
-		/*
-		* Macro expansion for X, Y boundary conditions
-		*/
-		_X_YZ
-
-		/*
-		* Macro expansion for X, Y, Z boundary conditions
-		*/
-		_X_Y_Z
+		for (int t=0; t<numcores; t++) {
+			pthread_join(threads[t], NULL);
+		}
 
 		memcpy(input, potential, size);
 	}
