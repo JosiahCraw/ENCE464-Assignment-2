@@ -13,7 +13,7 @@
 /// \param delta is the voxel spacing in all directions
 /// \param numiters is the number of iterations to perform
 /// \param numcores is the number of CPU cores to use.  If 0, an optimal number is chosen
-void demo_poisson_dirichlet (double * __restrict__ source,
+void poisson_dirichlet (double * __restrict__ source,
                         double * __restrict__ potential,
                         double Vbound,
                         unsigned int xsize, unsigned int ysize, unsigned int zsize, double delta,

@@ -11,4 +11,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Runs Tests
-        run: cd test && make all
+        run: make all
