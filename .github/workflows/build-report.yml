@@ -6,7 +6,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: blang/latex:ctanbasic
+    container: blang/latex:ctanfull
     steps:
       - uses: actions/checkout@v2
       - name: Runs Tests
