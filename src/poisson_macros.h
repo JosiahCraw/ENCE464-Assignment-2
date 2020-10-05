@@ -89,6 +89,19 @@
 				}\
 			}\
 		}
+		
+/*
+ * Macro expansion for no boundary conditions
+ */
+#define XYZ_N \
+		for (unsigned int z = 1; z < zsize+1; z++) {\
+			for (unsigned int y = 1; y < ysize-1; y++) {\
+				for (unsigned int x = 1; x < xsize-1; x++) {\
+					double res = 0;\
+					COMPUTE\
+				}\
+			}\
+		}
 
 /*
  * Macro expansion for Z boundary conditions
