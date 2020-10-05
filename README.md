@@ -28,8 +28,8 @@ user@linux:~$ make run_remote_test_201 host=cs19119bs user=jcr124 n=501 iter=20
 
 - [x] Timed testing
 - [x] Timed testing on remote computer (for consistency)
-- [ ] Optimise out the `if` statements
-- [ ] Add threading
+- [x] Optimise out the `if` statements
+- [x] Add threading
 - [ ] Add GPU Support (Optional)
  
 ## Authors
