@@ -65,15 +65,15 @@ int main (int argc, char *argv[])
     poisson_dirichlet(source, potential, 0.25, xsize, ysize, zsize, delta,
                       numiters, numcores);
 
-    for (int z=0; z<zsize; z++) {
-        for (int y=0; y<ysize; y++) {
-            for (int x=0; x<xsize; x++) {
-                printf("%f ", potential[((z * ysize) + y) * xsize + x]);
-            }
-            printf("\n");
-        }
-        printf("---------------------------\n");
-    }
+    // for (int z=0; z<zsize; z++) {
+    //     for (int y=0; y<ysize; y++) {
+    //         for (int x=0; x<xsize; x++) {
+    //             printf("%f ", potential[((z * ysize) + y) * xsize + x]);
+    //         }
+    //         printf("\n");
+    //     }
+    //     printf("---------------------------\n");
+    // }
 
     // The size of the potential array, this is used later
     size_t potential_size = xsize * ysize * zsize * sizeof(*source);
@@ -100,17 +100,17 @@ int main (int argc, char *argv[])
     demo_poisson_dirichlet(source, potential, 0.25, xsize, ysize, zsize, delta,
                       numiters, numcores);
     
-    printf("\n Demo Array\n");
+    // printf("\n Demo Array\n");
 
-    for (int z=0; z<zsize; z++) {
-        for (int y=0; y<ysize; y++) {
-            for (int x=0; x<xsize; x++) {
-                printf("%f ", potential[((z * ysize) + y) * xsize + x]);
-            }
-            printf("\n");
-        }
-        printf("---------------------------\n");
-    }
+    // for (int z=0; z<zsize; z++) {
+    //     for (int y=0; y<ysize; y++) {
+    //         for (int x=0; x<xsize; x++) {
+    //             printf("%f ", potential[((z * ysize) + y) * xsize + x]);
+    //         }
+    //         printf("\n");
+    //     }
+    //     printf("---------------------------\n");
+    // }
 
     // Hash the second run
     unsigned char demo_hash[MD5_DIGEST_LENGTH];
