@@ -177,7 +177,8 @@ void poisson_dirichlet (double * __restrict__ source,
 			
 		} else { 
 			// Split into boundary thread and internal threads
-			deltaz = (zsize - 2) / (numcores - 1);
+			unsigned int deltaz_init = (zsize - 2) / (numcores - 1);
+			unsigned int rem = (zsize - 2) % (numcores - 1);
 			
 			// Create boundary thread
 			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
@@ -197,8 +198,15 @@ void poisson_dirichlet (double * __restrict__ source,
 			 // Create Internal Threads
 			for (int t=1; t<numcores; t++) {
 				poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
-
-				deltaz += (deltaz % numcores && t == numcores - 1) ? 1 : 0; 
+				
+				if (rem) {
+					deltaz = deltaz_init + 1;
+					rem--;
+				} else {
+					deltaz = deltaz_init;
+				}
+				
+				//deltaz += (deltaz % numcores && t == numcores - 1) ? 1 : 0; 
 				printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
 				cfg->source = source + zslice * ysize * zsize;
 				cfg->potential = potential + zslice * ysize * zsize;

@@ -17,7 +17,7 @@ quick_test: build
 
 test_comprehensive: build_comp
 	@echo Running Test...
-	./comp_test 501 100
+	./comp_test 501 100 4
 	rm comp_test
 	@echo Test Passed!
 
