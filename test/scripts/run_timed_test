@@ -3,7 +3,7 @@ then
     echo "Running Test 1: (101, $2)"
     echo "#------------------#"
 
-    time ./timed_test 101 $2
+    time ./timed_test 101 $2 $3
     echo ""
     echo "#------------------#"
 fi
@@ -13,7 +13,7 @@ then
     echo "Running Test 2: (201, $2)"
     echo "#------------------#"
 
-    time ./timed_test 201 $2
+    time ./timed_test 201 $2 $3
     echo ""
     echo "#------------------#"
 fi
@@ -23,7 +23,7 @@ then
     echo "Running Test 3: (301, $2)"
     echo "#------------------#"
 
-    time ./timed_test 301 $2
+    time ./timed_test 301 $2 $3
     echo ""
     echo "#------------------#"
 fi
@@ -33,7 +33,7 @@ then
     echo "Running Test 4: (401, $2)"
     echo "#------------------#"
 
-    time ./timed_test 401 $2
+    time ./timed_test 401 $2 $3
     echo ""
     echo "#------------------#"
 fi
@@ -43,7 +43,7 @@ then
     echo "Running Test 5: (501, $2)"
     echo "#------------------#"
 
-    time ./timed_test 501 $2
+    time ./timed_test 501 $2 $3
     echo ""
     echo "#------------------#"
 fi
@@ -53,7 +53,7 @@ then
     echo "Running Test 6: (601, $2)"
     echo "#------------------#"
 
-    time ./timed_test 601 $2
+    time ./timed_test 601 $2 $3
     echo ""
     echo "#------------------#"
 fi
@@ -63,7 +63,7 @@ then
     echo "Running Test 7: (701, $2)"
     echo "#------------------#"
 
-    time ./timed_test 701 $2
+    time ./timed_test 701 $2 $3
     echo ""
     echo "#------------------#"
 fi
@@ -73,7 +73,7 @@ then
     echo "Running Test 8: (801, $2)"
     echo "#------------------#"
 
-    time ./timed_test 801 $2
+    time ./timed_test 801 $2 $3
     echo ""
     echo "#------------------#"
 fi
@@ -83,7 +83,7 @@ then
     echo "Running Test 9: (901, $2)"
     echo "#------------------#"
 
-    time ./timed_test 901 $2
+    time ./timed_test 901 $2 $3
     echo ""
     echo "#------------------#"
 fi

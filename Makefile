@@ -29,7 +29,7 @@ looong_test: build
 
 timed_test: build_timed
 	@echo Running Timed Test...
-	test/scripts/run_timed_test $(N) $(iter)
+	test/scripts/run_timed_test $(N) $(iter) $(thread)
 	rm timed_test
 	@echo Timed Test Complete!
 
@@ -39,4 +39,4 @@ run_remote_test: build_timed
 	@echo Finished Running Remote Test!
 
 clean:
-	rm poisson_test timed_test
+	rm comp_test poisson_test timed_test
