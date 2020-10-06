@@ -72,8 +72,8 @@ void poisson_boundary_task (void* arg)
     unsigned int ysize = cfg->ysize;
     unsigned int zsize = cfg->zsize;
     double delta = cfg->delta;
-    
-    
+
+
 	/*
 	* Macro expansion for Z boundary conditions
 	*/
@@ -121,7 +121,7 @@ void poisson_internal_task (void* arg)
     unsigned int ysize = cfg->ysize;
     unsigned int zsize = cfg->zsize;
     double delta = cfg->delta;
-    
+
     XYZ_N
 }
 
@@ -148,6 +148,10 @@ void poisson_dirichlet (double * __restrict__ source,
 		fprintf(stderr, "malloc failure\n");
 		return;
 	}
+// Pointers to keep track of original potential and input locations in memory
+double* potential_o = potential;
+double* input_o = input;
+
 
 	if (numcores == 0) {
 		numcores = 1;
@@ -158,7 +162,7 @@ void poisson_dirichlet (double * __restrict__ source,
 
 		unsigned int zslice = 0;
 		unsigned int deltaz = zsize / numcores;
-		
+
 		if (numcores == 1) {
 			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
 			printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
@@ -174,12 +178,12 @@ void poisson_dirichlet (double * __restrict__ source,
 			zslice += deltaz;
 
 			pthread_create(&threads[0], NULL, poisson_task, (void*)cfg);
-			
-		} else { 
+
+		} else {
 			// Split into boundary thread and internal threads
 			unsigned int deltaz_init = (zsize - 2) / (numcores - 1);
 			unsigned int rem = (zsize - 2) % (numcores - 1);
-			
+
 			// Create boundary thread
 			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
 			printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
@@ -193,20 +197,20 @@ void poisson_dirichlet (double * __restrict__ source,
 			cfg->delta = delta;
 
 			pthread_create(&threads[0], NULL, poisson_boundary_task, (void*)cfg);
-			
+
 
 			 // Create Internal Threads
 			for (int t=1; t<numcores; t++) {
 				poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
-				
+
 				if (rem) {
 					deltaz = deltaz_init + 1;
 					rem--;
 				} else {
 					deltaz = deltaz_init;
 				}
-				
-				//deltaz += (deltaz % numcores && t == numcores - 1) ? 1 : 0; 
+
+				//deltaz += (deltaz % numcores && t == numcores - 1) ? 1 : 0;
 				printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
 				cfg->source = source + zslice * ysize * zsize;
 				cfg->potential = potential + zslice * ysize * zsize;
@@ -227,7 +231,25 @@ void poisson_dirichlet (double * __restrict__ source,
 			pthread_join(threads[t], NULL);
 		}
 
-		memcpy(input, potential, size);
+		//memcpy(input, potential, size);
+		// Swapping out memcpy
+
+		double* temp = potential;
+		potential = input;
+		input = temp;
 	}
+	// potential and input are swapped at the end of the last iteration, so swap them back
+	double* temp = potential;
+	potential = input;
+	input = temp;
+
+	// Check potential and input are pointing at the correct locations
+	if (potential != potential_o) {
+		// Input is pointing at the original potential location, so copy potential to input, and swap the pointers
+		memcpy(input,potential,size);
+		potential = potential_o;
+		input = input_o;
+	}
+
 	free(input);
 }
