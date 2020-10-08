@@ -61,7 +61,72 @@ void poisson_task (void* arg)
 
 }
 
-void poisson_boundary_task (void* arg)
+//void poisson_boundary_task (void* arg)
+//{
+	//poisson_cfg_t* cfg = (poisson_cfg_t*)arg;
+	//double *source = cfg->source;
+    //double *potential = cfg->potential;
+	//double *input = cfg->input;
+    //double Vbound = cfg->Vbound;
+    //unsigned int xsize = cfg->xsize;
+    //unsigned int ysize = cfg->ysize;
+    //unsigned int zsize = cfg->zsize;
+    //double delta = cfg->delta;
+    
+    
+	///*
+	//* Macro expansion for Z boundary conditions
+	//*/
+	//XY_Z
+
+	///*
+	//* Macro expansion for Y boundary conditions
+	//*/
+	//X_YZ
+
+	///*
+	//* Macro expansion for Y, Z boundary conditions
+	//*/
+	//X_Y_Z
+
+	///*
+	//* Macro expansion for X boundary conditions
+	//*/
+	//_XYZ
+
+	///*
+	//* Macro expansion for X, Z boundary conditions
+	//*/
+	//_XY_Z
+
+	///*
+	//* Macro expansion for X, Y boundary conditions
+	//*/
+	//_X_YZ
+
+	///*
+	//* Macro expansion for X, Y, Z boundary conditions
+	//*/
+	//_X_Y_Z
+//}
+
+//void poisson_internal_task (void* arg)
+//{
+	//poisson_cfg_t* cfg = (poisson_cfg_t*)arg;
+	//double *source = cfg->source;
+    //double *potential = cfg->potential;
+	//double *input = cfg->input;
+    //double Vbound = cfg->Vbound;
+    //unsigned int xsize = cfg->xsize;
+    //unsigned int ysize = cfg->ysize;
+    //unsigned int zsize = cfg->zsize;
+    //double delta = cfg->delta;
+    
+    //XYZ_N
+//}
+
+// Task for top block
+void poisson_top_task (void* arg)
 {
 	poisson_cfg_t* cfg = (poisson_cfg_t*)arg;
 	double *source = cfg->source;
@@ -73,44 +138,49 @@ void poisson_boundary_task (void* arg)
     unsigned int zsize = cfg->zsize;
     double delta = cfg->delta;
     
+    /*
+    * Macro expansion for no boundary conditions
+    */
+    XYZ_TOP
     
 	/*
 	* Macro expansion for Z boundary conditions
 	*/
-	XY_Z
+	XY_Z_TOP
 
 	/*
 	* Macro expansion for Y boundary conditions
 	*/
-	X_YZ
+	X_YZ_TOP
 
 	/*
 	* Macro expansion for Y, Z boundary conditions
 	*/
-	X_Y_Z
+	X_Y_Z_TOP
 
 	/*
 	* Macro expansion for X boundary conditions
 	*/
-	_XYZ
+	_XYZ_TOP
 
 	/*
 	* Macro expansion for X, Z boundary conditions
 	*/
-	_XY_Z
+	_XY_Z_TOP
 
 	/*
 	* Macro expansion for X, Y boundary conditions
 	*/
-	_X_YZ
+	_X_YZ_TOP
 
 	/*
 	* Macro expansion for X, Y, Z boundary conditions
 	*/
-	_X_Y_Z
+	_X_Y_Z_TOP
 }
 
-void poisson_internal_task (void* arg)
+// Task for bottom block
+void poisson_bot_task (void* arg)
 {
 	poisson_cfg_t* cfg = (poisson_cfg_t*)arg;
 	double *source = cfg->source;
@@ -122,7 +192,80 @@ void poisson_internal_task (void* arg)
     unsigned int zsize = cfg->zsize;
     double delta = cfg->delta;
     
-    XYZ_N
+    /*
+    * Macro expansion for no boundary conditions
+    */
+    XYZ_BOT
+    
+	/*
+	* Macro expansion for Z boundary conditions
+	*/
+	XY_Z_BOT
+
+	/*
+	* Macro expansion for Y boundary conditions
+	*/
+	X_YZ_BOT
+
+	/*
+	* Macro expansion for Y, Z boundary conditions
+	*/
+	X_Y_Z_BOT
+
+	/*
+	* Macro expansion for X boundary conditions
+	*/
+	_XYZ_BOT
+
+	/*
+	* Macro expansion for X, Z boundary conditions
+	*/
+	_XY_Z_BOT
+
+	/*
+	* Macro expansion for X, Y boundary conditions
+	*/
+	_X_YZ_BOT
+
+	/*
+	* Macro expansion for X, Y, Z boundary conditions
+	*/
+	_X_Y_Z_BOT
+}
+
+// Task for middle block
+void poisson_mid_task (void* arg)
+{
+	poisson_cfg_t* cfg = (poisson_cfg_t*)arg;
+	double *source = cfg->source;
+    double *potential = cfg->potential;
+	double *input = cfg->input;
+    double Vbound = cfg->Vbound;
+    unsigned int xsize = cfg->xsize;
+    unsigned int ysize = cfg->ysize;
+    unsigned int zsize = cfg->zsize;
+    double delta = cfg->delta;
+    
+    /*
+    * Macro expansion for no boundary conditions
+    */
+    XYZ_MID
+
+	/*
+	* Macro expansion for Y boundary conditions
+	*/
+	X_YZ_MID
+
+
+	/*
+	* Macro expansion for X boundary conditions
+	*/
+	_XYZ_MID
+
+	/*
+	* Macro expansion for X, Y boundary conditions
+	*/
+	_X_YZ_MID
 }
 
 /// Solve Poisson's equation for a rectangular box with Dirichlet
@@ -157,9 +300,35 @@ void poisson_dirichlet (double * __restrict__ source,
 		pthread_t threads[numcores];
 
 		unsigned int zslice = 0;
-		unsigned int deltaz = zsize / numcores;
+
 		
 		if (numcores == 1) {
+			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
+			cfg->source = source;
+			cfg->potential = potential;
+			cfg->input = input;
+			cfg->Vbound = Vbound;
+			cfg->xsize = xsize;
+			cfg->ysize = ysize;
+			cfg->zsize = zsize;
+			cfg->delta = delta;
+
+			pthread_create(&threads[0], NULL, poisson_task, (void*)cfg);
+			
+		} else { 
+			// Split into boundary thread and internal threads
+			unsigned int deltaz_init = zsize / numcores;
+			unsigned int deltaz = deltaz_init;
+			unsigned int rem = zsize % numcores;
+			
+			// Create top thread
+			if (rem) {
+				deltaz = deltaz_init + 1;
+					rem--;
+			} else {
+				deltaz = deltaz_init;
+			}
+			
 			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
 			printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
 			cfg->source = source + zslice * ysize * zsize;
@@ -171,56 +340,58 @@ void poisson_dirichlet (double * __restrict__ source,
 			cfg->zsize = deltaz;
 			cfg->delta = delta;
 
+			pthread_create(&threads[0], NULL, poisson_top_task, (void*)cfg);
+			
 			zslice += deltaz;
-
-			pthread_create(&threads[0], NULL, poisson_task, (void*)cfg);
-			
-		} else { 
-			// Split into boundary thread and internal threads
-			unsigned int deltaz_init = (zsize - 2) / (numcores - 1);
-			unsigned int rem = (zsize - 2) % (numcores - 1);
-			
-			// Create boundary thread
-			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
-			printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
-			cfg->source = source; //+ zslice * ysize * zsize;
-			cfg->potential = potential; //+ zslice * ysize * zsize;
-			cfg->input = input; //+ zslice * ysize * zsize;
-			cfg->Vbound = Vbound;
-			cfg->xsize = xsize;
-			cfg->ysize = ysize;
-			cfg->zsize = zsize;
-			cfg->delta = delta;
-
-			pthread_create(&threads[0], NULL, poisson_boundary_task, (void*)cfg);
 			
 
-			 // Create Internal Threads
-			for (int t=1; t<numcores; t++) {
-				poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
-				
-				if (rem) {
-					deltaz = deltaz_init + 1;
-					rem--;
-				} else {
-					deltaz = deltaz_init;
+			 // Create Middle Threads
+			 if (numcores > 2) {
+				for (int t=1; t<numcores-1; t++) {
+					poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
+					
+					if (rem) {
+						deltaz = deltaz_init + 1;
+						rem--;
+					} else {
+						deltaz = deltaz_init;
+					}
+					
+					printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
+					cfg->source = source + zslice * ysize * zsize;
+					cfg->potential = potential + zslice * ysize * zsize;
+					cfg->input = input + zslice * ysize * zsize;
+					cfg->Vbound = Vbound;
+					cfg->xsize = xsize;
+					cfg->ysize = ysize;
+					cfg->zsize = deltaz;
+					cfg->delta = delta;
+	
+					zslice += deltaz;
+	
+					pthread_create(&threads[t], NULL, poisson_mid_task, (void*)cfg);
 				}
-				
-				//deltaz += (deltaz % numcores && t == numcores - 1) ? 1 : 0; 
-				printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
-				cfg->source = source + zslice * ysize * zsize;
-				cfg->potential = potential + zslice * ysize * zsize;
-				cfg->input = input + zslice * ysize * zsize;
-				cfg->Vbound = Vbound;
-				cfg->xsize = xsize;
-				cfg->ysize = ysize;
-				cfg->zsize = deltaz;
-				cfg->delta = delta;
-
-				zslice += deltaz;
-
-				pthread_create(&threads[t], NULL, poisson_internal_task, (void*)cfg);
 			}
+			// Create Bottom Thread
+			if (rem) {
+				deltaz = deltaz_init + 1;
+					rem--;
+			} else {
+				deltaz = deltaz_init;
+			}
+			
+			poisson_cfg_t* cfg_b = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
+			printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
+			cfg_b->source = source + zslice * ysize * zsize;
+			cfg_b->potential = potential + zslice * ysize * zsize;
+			cfg_b->input = input + zslice * ysize * zsize;
+			cfg_b->Vbound = Vbound;
+			cfg_b->xsize = xsize;
+			cfg_b->ysize = ysize;
+			cfg_b->zsize = deltaz;
+			cfg_b->delta = delta;
+
+			pthread_create(&threads[numcores-1], NULL, poisson_bot_task, (void*)cfg_b);
 		}
 
 		for (int t=0; t<numcores; t++) {
