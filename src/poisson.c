@@ -142,7 +142,7 @@ void poisson_top_task (void* arg)
     * Macro expansion for no boundary conditions
     */
     XYZ
-    
+
 	/*
 	* Macro expansion for Z boundary conditions
 	*/
@@ -291,6 +291,10 @@ void poisson_dirichlet (double * __restrict__ source,
 		fprintf(stderr, "malloc failure\n");
 		return;
 	}
+// Pointers to keep track of original potential and input locations in memory
+double* potential_o = potential;
+double* input_o = input;
+
 
 	if (numcores == 0) {
 		numcores = 1;
@@ -301,7 +305,7 @@ void poisson_dirichlet (double * __restrict__ source,
 
 		unsigned int zslice = 0;
 
-		
+	
 		if (numcores == 1) {
 			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
 			cfg->source = source;
@@ -371,6 +375,7 @@ void poisson_dirichlet (double * __restrict__ source,
 	
 					pthread_create(&threads[t], NULL, poisson_mid_task, (void*)cfg);
 				}
+
 			}
 			// Create Bottom Thread
 			if (rem) {
@@ -398,7 +403,25 @@ void poisson_dirichlet (double * __restrict__ source,
 			pthread_join(threads[t], NULL);
 		}
 
-		memcpy(input, potential, size);
+		//memcpy(input, potential, size);
+		// Swapping out memcpy
+
+		double* temp = potential;
+		potential = input;
+		input = temp;
 	}
+	// potential and input are swapped at the end of the last iteration, so swap them back
+	double* temp = potential;
+	potential = input;
+	input = temp;
+
+	// Check potential and input are pointing at the correct locations
+	if (potential != potential_o) {
+		// Input is pointing at the original potential location, so copy potential to input, and swap the pointers
+		memcpy(input,potential,size);
+		potential = potential_o;
+		input = input_o;
+	}
+
 	free(input);
 }
