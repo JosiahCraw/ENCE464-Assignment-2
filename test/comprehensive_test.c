@@ -76,6 +76,10 @@ int main (int argc, char *argv[])
     // Run the Demo implementation
     demo_poisson_dirichlet(demo_source, demo_potential, 0.25, xsize, ysize, zsize, delta,
                       numiters, numcores);
+                      
+	//for (int ii = 0; ii < xsize * ysize * zsize; ii++) {
+		//printf("%f %f x=%d y=%d\n", potential[ii], demo_potential[ii], ii%xsize, ii/ysize);
+	//}
 
 
     // Check the hashes are equal

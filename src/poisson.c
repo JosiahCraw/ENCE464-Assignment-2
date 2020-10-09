@@ -141,7 +141,7 @@ void poisson_top_task (void* arg)
     /*
     * Macro expansion for no boundary conditions
     */
-    XYZ_TOP
+    XYZ
     
 	/*
 	* Macro expansion for Z boundary conditions
@@ -151,7 +151,7 @@ void poisson_top_task (void* arg)
 	/*
 	* Macro expansion for Y boundary conditions
 	*/
-	X_YZ_TOP
+	X_YZ
 
 	/*
 	* Macro expansion for Y, Z boundary conditions
@@ -161,7 +161,7 @@ void poisson_top_task (void* arg)
 	/*
 	* Macro expansion for X boundary conditions
 	*/
-	_XYZ_TOP
+	_XYZ
 
 	/*
 	* Macro expansion for X, Z boundary conditions
@@ -171,7 +171,7 @@ void poisson_top_task (void* arg)
 	/*
 	* Macro expansion for X, Y boundary conditions
 	*/
-	_X_YZ_TOP
+	_X_YZ
 
 	/*
 	* Macro expansion for X, Y, Z boundary conditions
@@ -195,7 +195,7 @@ void poisson_bot_task (void* arg)
     /*
     * Macro expansion for no boundary conditions
     */
-    XYZ_BOT
+    XYZ
     
 	/*
 	* Macro expansion for Z boundary conditions
@@ -205,7 +205,7 @@ void poisson_bot_task (void* arg)
 	/*
 	* Macro expansion for Y boundary conditions
 	*/
-	X_YZ_BOT
+	X_YZ
 
 	/*
 	* Macro expansion for Y, Z boundary conditions
@@ -215,7 +215,7 @@ void poisson_bot_task (void* arg)
 	/*
 	* Macro expansion for X boundary conditions
 	*/
-	_XYZ_BOT
+	_XYZ
 
 	/*
 	* Macro expansion for X, Z boundary conditions
@@ -225,7 +225,7 @@ void poisson_bot_task (void* arg)
 	/*
 	* Macro expansion for X, Y boundary conditions
 	*/
-	_X_YZ_BOT
+	_X_YZ
 
 	/*
 	* Macro expansion for X, Y, Z boundary conditions
@@ -249,23 +249,23 @@ void poisson_mid_task (void* arg)
     /*
     * Macro expansion for no boundary conditions
     */
-    XYZ_MID
+    XYZ
 
 	/*
 	* Macro expansion for Y boundary conditions
 	*/
-	X_YZ_MID
+	X_YZ
 
 
 	/*
 	* Macro expansion for X boundary conditions
 	*/
-	_XYZ_MID
+	_XYZ
 
 	/*
 	* Macro expansion for X, Y boundary conditions
 	*/
-	_X_YZ_MID
+	_X_YZ
 }
 
 /// Solve Poisson's equation for a rectangular box with Dirichlet
@@ -316,7 +316,7 @@ void poisson_dirichlet (double * __restrict__ source,
 			pthread_create(&threads[0], NULL, poisson_task, (void*)cfg);
 			
 		} else { 
-			// Split into boundary thread and internal threads
+			// Split into top, bottom, and possibly middle threads
 			unsigned int deltaz_init = zsize / numcores;
 			unsigned int deltaz = deltaz_init;
 			unsigned int rem = zsize % numcores;
@@ -337,7 +337,7 @@ void poisson_dirichlet (double * __restrict__ source,
 			cfg->Vbound = Vbound;
 			cfg->xsize = xsize;
 			cfg->ysize = ysize;
-			cfg->zsize = deltaz;
+			cfg->zsize = deltaz + 1;
 			cfg->delta = delta;
 
 			pthread_create(&threads[0], NULL, poisson_top_task, (void*)cfg);
@@ -358,13 +358,13 @@ void poisson_dirichlet (double * __restrict__ source,
 					}
 					
 					printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
-					cfg->source = source + zslice * ysize * zsize;
-					cfg->potential = potential + zslice * ysize * zsize;
-					cfg->input = input + zslice * ysize * zsize;
+					cfg->source = source + (zslice - 1) * ysize * zsize;
+					cfg->potential = potential + (zslice - 1) * ysize * zsize;
+					cfg->input = input + (zslice - 1) * ysize * zsize;
 					cfg->Vbound = Vbound;
 					cfg->xsize = xsize;
 					cfg->ysize = ysize;
-					cfg->zsize = deltaz;
+					cfg->zsize = deltaz + 2;
 					cfg->delta = delta;
 	
 					zslice += deltaz;
@@ -382,13 +382,13 @@ void poisson_dirichlet (double * __restrict__ source,
 			
 			poisson_cfg_t* cfg_b = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
 			printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
-			cfg_b->source = source + zslice * ysize * zsize;
-			cfg_b->potential = potential + zslice * ysize * zsize;
-			cfg_b->input = input + zslice * ysize * zsize;
+			cfg_b->source = source + (zslice - 1) * ysize * zsize;
+			cfg_b->potential = potential + (zslice - 1) * ysize * zsize;
+			cfg_b->input = input + (zslice - 1) * ysize * zsize;
 			cfg_b->Vbound = Vbound;
 			cfg_b->xsize = xsize;
 			cfg_b->ysize = ysize;
-			cfg_b->zsize = deltaz;
+			cfg_b->zsize = deltaz + 1;
 			cfg_b->delta = delta;
 
 			pthread_create(&threads[numcores-1], NULL, poisson_bot_task, (void*)cfg_b);
