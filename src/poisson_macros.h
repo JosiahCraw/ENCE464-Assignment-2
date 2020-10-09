@@ -189,7 +189,7 @@
                 S_POT\
                 CLR_RES\
                 \
-                x = zsize - 1;\
+                x = xsize - 1;\
                 VBOUND /* XUP */ \
                 XDOWN\
                 YUP\
@@ -515,4 +515,299 @@
         S_DELTA\
         DIV\
         S_POT
+        
+/*
+ * 	New Macros for splitting into top, middle and bottom layers
+ */
     
+// Top 4 corners
+#define _X_Y_Z_TOP \
+		double res = 0;\
+        \
+        unsigned int x = 0;\
+        unsigned int y = 0;\
+        unsigned int z = 0;\
+        \
+        XUP\
+        VBOUND /* XDOWN */\
+        YUP\
+        VBOUND /* YDOWN */ \
+        ZUP\
+        VBOUND /* ZDOWN */ \
+        S_DELTA\
+        DIV\
+        S_POT\
+        CLR_RES\
+        \
+		x = 0;\
+        y = ysize - 1;\
+        z = 0;\
+        \
+        XUP\
+        VBOUND /* XDOWN */ \
+        VBOUND /* YUP */ \
+        YDOWN\
+        ZUP\
+        VBOUND /* ZDOWN */ \
+        S_DELTA\
+        DIV\
+        S_POT\
+        CLR_RES\
+        \
+		x = xsize - 1;\
+        y = 0;\
+        z = 0;\
+        \
+        VBOUND /* XUP */ \
+        XDOWN\
+        YUP\
+        VBOUND /* YDOWN */ \
+        ZUP\
+        VBOUND /* ZDOWN */ \
+        S_DELTA\
+        DIV\
+        S_POT\
+        CLR_RES\
+        \
+		x = xsize - 1;\
+        y = ysize - 1;\
+        z = 0;\
+        \
+        VBOUND /* XUP */ \
+        XDOWN\
+        VBOUND /* YUP */ \
+        YDOWN\
+        ZUP\
+        VBOUND /* ZDOWN */ \
+        S_DELTA\
+        DIV\
+        S_POT
+        
+// Bottom 4 corners
+#define _X_Y_Z_BOT\
+		double res = 0;\
+        \
+        unsigned int x = 0;\
+        unsigned int y = 0;\
+        unsigned int z = zsize - 1;\
+        \
+        XUP\
+        VBOUND /* XDOWN */ \
+        YUP\
+        VBOUND /* YDOWN */ \
+        VBOUND /* ZUP */ \
+        ZDOWN\
+        S_DELTA\
+        DIV\
+        S_POT\
+        CLR_RES\
+        \
+        x = 0;\
+        y = ysize - 1;\
+        z = zsize - 1;\
+        \
+        XUP\
+        VBOUND /* XDOWN */ \
+        VBOUND /* YUP */\
+        YDOWN\
+        VBOUND /* ZUP */ \
+        ZDOWN\
+        S_DELTA\
+        DIV\
+        S_POT\
+        CLR_RES\
+        \
+		x = xsize - 1;\
+        y = 0;\
+        z = zsize - 1;\
+        \
+        VBOUND /* XUP */ \
+        XDOWN\
+        YUP\
+        VBOUND /* YDOWN */ \
+        VBOUND /* ZUP */ \
+        ZDOWN\
+        S_DELTA\
+        DIV\
+        S_POT\
+        CLR_RES\
+        \
+		x = xsize - 1;\
+        y = ysize - 1;\
+        z = zsize - 1;\
+        \
+        VBOUND /* XUP */ \
+        XDOWN\
+        VBOUND /* YUP */ \
+        YDOWN\
+        VBOUND /* ZUP */ \
+        ZDOWN\
+        S_DELTA\
+        DIV\
+        S_POT
+        
+// Top Z boundary side
+#define XY_Z_TOP \
+        for (unsigned int y = 1; y < ysize-1; y++) {\
+            for (unsigned int x = 1; x < xsize-1; x++) {\
+                double res = 0;\
+                \
+                unsigned int z = 0;\
+                XUP\
+                XDOWN\
+                YUP\
+                YDOWN\
+                ZUP\
+                VBOUND /* ZDOWN */ \
+                S_DELTA\
+                DIV\
+                S_POT\
+            }\
+        }
+        
+// Bottom Z boundary side
+#define XY_Z_BOT \
+        for (unsigned int y = 1; y < ysize-1; y++) {\
+            for (unsigned int x = 1; x < xsize-1; x++) {\
+                double res = 0;\
+                \
+                unsigned int z = zsize - 1;\
+                XUP\
+                XDOWN\
+                YUP\
+                YDOWN\
+                VBOUND /* ZUP */ \
+                ZDOWN\
+                S_DELTA\
+                DIV\
+                S_POT\
+            }\
+        }
+        
+// Top ZX edges
+#define _XY_Z_TOP \
+		for (unsigned int y = 1; y < ysize-1; y++) {\
+            double res = 0;\
+            \
+            unsigned int x = 0;\
+            unsigned int z = 0;\
+            \
+            XUP\
+            VBOUND /* XDOWN */ \
+            YUP\
+            YDOWN\
+            ZUP\
+            VBOUND /* ZDOWN */ \
+            S_DELTA\
+            DIV\
+            S_POT\
+            CLR_RES\
+            \
+            x = xsize - 1;\
+            \
+            VBOUND /* XUP */ \
+            XDOWN\
+            YUP\
+            YDOWN\
+            ZUP\
+            VBOUND /* ZDOWN */ \
+            S_DELTA\
+            DIV\
+            S_POT\
+        }
+
+
+// Bottom ZX edges
+#define _XY_Z_BOT \
+		for (unsigned int y = 1; y < ysize-1; y++) {\
+            double res = 0;\
+            \
+            unsigned int x = 0;\
+            unsigned int z = zsize - 1;\
+            \
+            XUP\
+            VBOUND /* XDOWN */ \
+            YUP\
+            YDOWN\
+            VBOUND /* ZUP */ \
+            ZDOWN\
+            S_DELTA\
+            DIV\
+            S_POT\
+            CLR_RES\
+            \
+            x = xsize - 1;\
+            \
+            VBOUND /* XUP */ \
+            XDOWN\
+            YUP\
+            YDOWN\
+            VBOUND /* ZUP */ \
+            ZDOWN\
+            S_DELTA\
+            DIV\
+            S_POT\
+        }
+
+// Top ZY edges
+#define X_Y_Z_TOP \
+		for (unsigned int x = 1; x < xsize-1; x++) {\
+            double res = 0;\
+            unsigned int y = 0;\
+            unsigned int z = 0;\
+            \
+            XUP\
+            XDOWN\
+            YUP\
+            VBOUND /* YDOWN */ \
+            ZUP\
+            VBOUND /* ZDOWN */ \
+            S_DELTA\
+            DIV\
+            S_POT\
+            CLR_RES\
+            \
+            y = ysize - 1;\
+            \
+            XUP\
+            XDOWN\
+            VBOUND /* YUP */ \
+            YDOWN\
+            ZUP\
+            VBOUND /* ZDOWN */ \
+            S_DELTA\
+            DIV\
+            S_POT\
+        }
+
+// Bottom ZY edges
+#define X_Y_Z_BOT \
+		for (unsigned int x = 1; x < xsize-1; x++) {\
+            double res = 0;\
+            unsigned int y = 0;\
+            unsigned int z = zsize - 1;\
+			\
+            XUP\
+            XDOWN\
+            YUP\
+            VBOUND /* YDOWN */ \
+            VBOUND /* ZUP */ \
+            ZDOWN\
+            S_DELTA\
+            DIV\
+            S_POT\
+            CLR_RES\
+            \
+            y = ysize - 1;\
+            \
+            XUP\
+            XDOWN\
+            VBOUND /* YUP */ \
+            YDOWN\
+            VBOUND /* ZUP */ \
+            ZDOWN\
+            S_DELTA\
+            DIV\
+            S_POT\
+        }
+
