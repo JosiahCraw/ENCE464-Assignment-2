@@ -19,9 +19,9 @@ void poisson_task (void* arg)
     double delta = cfg->delta;
 	unsigned int numiters = cfg->numiters;
 	pthread_barrier_t *barrier = cfg->barrier;
-	
+
 	for (unsigned int iter = 0; iter < numiters; iter++) {
-		
+
 		/*
 		* Macro expansion for no boundary conditions
 		*/
@@ -61,7 +61,7 @@ void poisson_task (void* arg)
 		* Macro expansion for X, Y, Z boundary conditions
 		*/
 		_X_Y_Z
-		
+
 		double* temp = potential;
 		potential = input;
 		input = temp;
@@ -84,10 +84,10 @@ void poisson_top_task (void* arg)
     double delta = cfg->delta;
     unsigned int numiters = cfg->numiters;
 	pthread_barrier_t *barrier = cfg->barrier;
-	
-    
+
+
 	for (unsigned int iter = 0; iter < numiters; iter++) {
-    
+
 		/*
 		* Macro expansion for no boundary conditions
 		*/
@@ -127,9 +127,9 @@ void poisson_top_task (void* arg)
 		* Macro expansion for X, Y, Z boundary conditions
 		*/
 		_X_Y_Z_TOP
-		
+
 		pthread_barrier_wait(barrier);
-		
+
 		double* temp = potential;
 		potential = input;
 		input = temp;
@@ -150,14 +150,14 @@ void poisson_bot_task (void* arg)
     double delta = cfg->delta;
 	unsigned int numiters = cfg->numiters;
 	pthread_barrier_t *barrier = cfg->barrier;
-    
+
 	for (unsigned int iter = 0; iter < numiters; iter++) {
-    
+
 		/*
 		* Macro expansion for no boundary conditions
 		*/
 		XYZ
-		
+
 		/*
 		* Macro expansion for Z boundary conditions
 		*/
@@ -192,9 +192,9 @@ void poisson_bot_task (void* arg)
 		* Macro expansion for X, Y, Z boundary conditions
 		*/
 		_X_Y_Z_BOT
-		
+
 		pthread_barrier_wait(barrier);
-		
+
 		double* temp = potential;
 		potential = input;
 		input = temp;
@@ -215,32 +215,32 @@ void poisson_mid_task (void* arg)
     double delta = cfg->delta;
 	unsigned int numiters = cfg->numiters;
 	pthread_barrier_t *barrier = cfg->barrier;
-    
+
 	for (unsigned int iter = 0; iter < numiters; iter++) {
-    
+
 	    /*
 	    * Macro expansion for no boundary conditions
 	    */
 	    XYZ
-	
+
 		/*
 		* Macro expansion for Y boundary conditions
 		*/
 		X_YZ
-	
-	
+
+
 		/*
 		* Macro expansion for X boundary conditions
 		*/
 		_XYZ
-	
+
 		/*
 		* Macro expansion for X, Y boundary conditions
 		*/
 		_X_YZ
-		
+
 		pthread_barrier_wait(barrier);
-		
+
 		double* temp = potential;
 		potential = input;
 		input = temp;
@@ -276,7 +276,7 @@ void poisson_dirichlet (double * __restrict__ source,
 		numcores = 1;
 	}
 	memcpy(input, source, size);
-	
+
 	pthread_t threads[numcores];
 	pthread_barrier_t barrier;
 	unsigned count = numcores;
@@ -288,7 +288,7 @@ void poisson_dirichlet (double * __restrict__ source,
 		fprintf(stderr, "Failed to create pthread barrier\n");
 	}
 
-		
+
 	unsigned int zslice = 0;
 
 
@@ -302,15 +302,17 @@ void poisson_dirichlet (double * __restrict__ source,
 		cfg->ysize = ysize;
 		cfg->zsize = zsize;
 		cfg->delta = delta;
+		cfg->numiters = numiters;
+		cfg->barrier = &barrier;
 
 		pthread_create(&threads[0], NULL, poisson_task, (void*)cfg);
-		
-	} else { 
+
+	} else {
 		// Split into top, bottom, and possibly middle threads
 		unsigned int deltaz_init = zsize / numcores;
 		unsigned int deltaz = deltaz_init;
 		unsigned int rem = zsize % numcores;
-		
+
 		// Create top thread
 		if (rem) {
 			deltaz = deltaz_init + 1;
@@ -318,7 +320,7 @@ void poisson_dirichlet (double * __restrict__ source,
 		} else {
 			deltaz = deltaz_init;
 		}
-		
+
 		poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
 		cfg->source = source + zslice * ysize * zsize;
 		cfg->potential = potential + zslice * ysize * zsize;
@@ -332,22 +334,22 @@ void poisson_dirichlet (double * __restrict__ source,
 		cfg->barrier = &barrier;
 
 		pthread_create(&threads[0], NULL, poisson_top_task, (void*)cfg);
-		
+
 		zslice += deltaz;
-		
+
 
 		 // Create Middle Threads
 		 if (numcores > 2) {
 			for (int t=1; t<numcores-1; t++) {
 				poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
-				
+
 				if (rem) {
 					deltaz = deltaz_init + 1;
 					rem--;
 				} else {
 					deltaz = deltaz_init;
 				}
-				
+
 				cfg->source = source + (zslice - 1) * ysize * zsize;
 				cfg->potential = potential + (zslice - 1) * ysize * zsize;
 				cfg->input = input + (zslice - 1) * ysize * zsize;
@@ -372,7 +374,7 @@ void poisson_dirichlet (double * __restrict__ source,
 		} else {
 			deltaz = deltaz_init;
 		}
-		
+
 		poisson_cfg_t* cfg_b = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
 		cfg_b->source = source + (zslice - 1) * ysize * zsize;
 		cfg_b->potential = potential + (zslice - 1) * ysize * zsize;
@@ -387,7 +389,7 @@ void poisson_dirichlet (double * __restrict__ source,
 
 		pthread_create(&threads[numcores-1], NULL, poisson_bot_task, (void*)cfg_b);
 	}
-	
+
 
 
 	for (int t=0; t<numcores; t++) {
@@ -398,7 +400,7 @@ void poisson_dirichlet (double * __restrict__ source,
 	// Check potential and input are pointing at the correct locations
 	if (!(numiters % 2)) {
 		// Input is pointing at the original potential location, so copy potential to input, and swap the pointers
-		memcpy(input,potential,size);
+		memcpy(potential,input,size);
 	}
 
 	free(input);
