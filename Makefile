@@ -4,7 +4,7 @@ CFLAGS = -O3 -std=gnu99 -Wall -g3
 CLIB = -lpthread
 
 build: test/poisson_test.c test/example/demo_poisson.c src/poisson.c
-	gcc $(CFLAGS) -o poisson_test $^ -lcrypto -lssl -$(CLIB)
+	gcc $(CFLAGS) -o poisson_test $^ -lcrypto -lssl $(CLIB)
 
 build_comp: test/comprehensive_test.c test/example/demo_poisson.c src/poisson.c
 	gcc $(CFLAGS) -o comp_test $^ $(CLIB)

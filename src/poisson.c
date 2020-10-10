@@ -276,31 +276,11 @@ void poisson_dirichlet (double * __restrict__ source,
 		numcores = 1;
 	}
 	memcpy(input, source, size);
-<<<<<<< HEAD
-	for (unsigned int iter = 0; iter < numiters; iter++) {
-		pthread_t threads[numcores];
-
-		unsigned int zslice = 0;
-		unsigned int deltaz = zsize / numcores;
-
-		if (numcores == 1) {
-			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
-			// printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
-			cfg->source = source + zslice * ysize * zsize;
-			cfg->potential = potential + zslice * ysize * zsize;
-			cfg->input = input + zslice * ysize * zsize;
-			cfg->Vbound = Vbound;
-			cfg->xsize = xsize;
-			cfg->ysize = ysize;
-			cfg->zsize = deltaz;
-			cfg->delta = delta;
-=======
 	
 	pthread_t threads[numcores];
 	pthread_barrier_t barrier;
 	unsigned count = numcores;
 	int ret;
->>>>>>> e8dd5aeb67625cc88295676a643c2a17485c6160
 
 	ret = pthread_barrier_init(&barrier, NULL, count);
 
