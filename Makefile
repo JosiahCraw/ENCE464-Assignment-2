@@ -1,13 +1,16 @@
 all: quick_test
 
+CFLAGS = -O3 -std=gnu99 -Wall -g3
+CLIB = -lpthread
+
 build: test/poisson_test.c test/example/demo_poisson.c src/poisson.c
-	gcc -Iinclude -O3 -std=gnu99 -Wall -g3 -o poisson_test $^ -lcrypto -lssl -lpthread
+	gcc $(CFLAGS) -o poisson_test $^ -lcrypto -lssl -$(CLIB)
 
 build_comp: test/comprehensive_test.c test/example/demo_poisson.c src/poisson.c
-	gcc -Iinclude -O3 -std=gnu99 -Wall -g3 -o comp_test $^ -lpthread
+	gcc $(CFLAGS) -o comp_test $^ $(CLIB)
 
 build_timed: test/timed_test.c src/poisson.c
-	gcc -Iinclude -O3 -std=gnu99 -Wall -g3 -o timed_test $^ -lpthread
+	gcc $(CLFAGS) -o timed_test $^ $(CLIB)
 
 quick_test: build
 	@echo Running Test...
