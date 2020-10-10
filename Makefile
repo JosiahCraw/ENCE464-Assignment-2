@@ -1,13 +1,13 @@
 all: quick_test
 
 build: test/poisson_test.c test/example/demo_poisson.c src/poisson.c
-	gcc -O3 -std=c99 -Wall -g3 -o poisson_test $^ -lcrypto -lssl -lpthread
+	gcc -Iinclude -O3 -std=gnu99 -Wall -g3 -o poisson_test $^ -lcrypto -lssl -lpthread
 
 build_comp: test/comprehensive_test.c test/example/demo_poisson.c src/poisson.c
-	gcc -O3 -std=c99 -Wall -g3 -o comp_test $^ -lpthread
+	gcc -Iinclude -O3 -std=gnu99 -Wall -g3 -o comp_test $^ -lpthread
 
 build_timed: test/timed_test.c src/poisson.c
-	gcc -O3 -std=c99 -Wall -g3 -o timed_test $^ -lpthread
+	gcc -Iinclude -O3 -std=gnu99 -Wall -g3 -o timed_test $^ -lpthread
 
 quick_test: build
 	@echo Running Test...

@@ -11,6 +11,8 @@ typedef struct poisson_cfg
     unsigned int ysize;
     unsigned int zsize;
     double delta;
+    unsigned int numiters;
+	pthread_barrier_t *barrier;
 } poisson_cfg_t;
 
 

@@ -57,6 +57,7 @@ int main (int argc, char *argv[])
         numcores = atoi(argv[3]);
     else
         numcores = 0;
+        
 
     // Set source and potential to empty intially
     source = (double *)calloc(xsize * ysize * zsize, sizeof(*source));
@@ -68,6 +69,7 @@ int main (int argc, char *argv[])
     demo_potential = (double *)calloc(xsize * ysize * zsize + 1, sizeof(*potential));
 
     demo_source[((zsize / 2 * ysize) + ysize / 2) * xsize + xsize / 2] = 1.0;    
+    
     
     // Run the users implementation
     poisson_dirichlet(source, potential, 0.25, xsize, ysize, zsize, delta,
