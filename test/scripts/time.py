@@ -30,7 +30,9 @@ def plot_size_time():
     print(size_time)
 
     mp.plot(size_time[0], size_time[2])
-    mp.xlabel()
+    mp.xlabel("Dimension Size")
+    mp.ylabel("Time (s)")
+    mp.title("Computation Time to dimension size")
     mp.show()
 
 

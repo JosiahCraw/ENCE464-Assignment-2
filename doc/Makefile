@@ -1,5 +1,8 @@
-all: instructions.pdf
+all: instructions.pdf report
 
+report:
+	latexmk -pdf report.tex
+ 
 %.pdf: %.tex
 	pdflatex $*
 	pdflatex $*
