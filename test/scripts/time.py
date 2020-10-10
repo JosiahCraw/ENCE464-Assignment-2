@@ -24,12 +24,13 @@ def run_size_time(rep, thread, iter_num):
             spamwriter.writerow([size, thread, output])
         
 def plot_size_time():
-    size_time = genfromtxt('st.csv', delimiter=',')
+    size_time = genfromtxt('st.csv', delimiter=' ')
     size_time = np.transpose(size_time)
 
     print(size_time)
 
     mp.plot(size_time[0], size_time[2])
+    mp.xlabel()
     mp.show()
 
 
