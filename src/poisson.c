@@ -165,7 +165,7 @@ double* input_o = input;
 
 		if (numcores == 1) {
 			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
-			printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
+			// printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
 			cfg->source = source + zslice * ysize * zsize;
 			cfg->potential = potential + zslice * ysize * zsize;
 			cfg->input = input + zslice * ysize * zsize;
@@ -186,7 +186,7 @@ double* input_o = input;
 
 			// Create boundary thread
 			poisson_cfg_t* cfg = (poisson_cfg_t*)malloc(sizeof(poisson_cfg_t));
-			printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
+			// printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
 			cfg->source = source; //+ zslice * ysize * zsize;
 			cfg->potential = potential; //+ zslice * ysize * zsize;
 			cfg->input = input; //+ zslice * ysize * zsize;
@@ -211,7 +211,7 @@ double* input_o = input;
 				}
 
 				//deltaz += (deltaz % numcores && t == numcores - 1) ? 1 : 0;
-				printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
+				// printf("zslice: %d, deltaz: %d\n", zslice, deltaz);
 				cfg->source = source + zslice * ysize * zsize;
 				cfg->potential = potential + zslice * ysize * zsize;
 				cfg->input = input + zslice * ysize * zsize;

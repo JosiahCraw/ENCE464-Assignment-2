@@ -10,6 +10,7 @@ typedef struct poisson_cfg
     unsigned int xsize;
     unsigned int ysize;
     unsigned int zsize;
+    unsigned int numiters;
     double delta;
 } poisson_cfg_t;
 

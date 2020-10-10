@@ -2,6 +2,7 @@ poisson_test
 timed_test
 poisson
 comp_test
+*.csv
 *.o
 *.out
 *.pdf
