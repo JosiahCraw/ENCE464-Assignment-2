@@ -5,6 +5,7 @@ import time
 import csv
 
 import numpy as np
+from numpy import genfromtxt
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as mp
@@ -14,7 +15,7 @@ SIZES = [101, 201, 301, 401, 501, 601, 701, 801]
 NUM_ITER = 10
 DEFAULT_THREAD = 4
 
-def plot_size_time(rep, thread, iter_num):
+def run_size_time(rep, thread, iter_num):
     for size in SIZES:
         output = run_code('{} {} {}'.format(str(size), iter_num, thread), rep)
         with open('st.csv', 'a+', newline='') as csvfile:
@@ -22,9 +23,17 @@ def plot_size_time(rep, thread, iter_num):
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow([size, thread, output])
         
+def plot_size_time():
+    size_time = genfromtxt('st.csv', delimiter=',')
+    size_time = np.transpose(size_time)
+
+    print(size_time)
+
+    mp.plot(size_time[0], size_time[2])
+    mp.show()
 
 
-def plot_size_threads_time(rep, iter_num):
+def run_size_threads_time(rep, iter_num):
     threads = [1, 2, 4, 8, 16, 32, 64]
     for size in SIZES:
         for thread in threads:
@@ -34,8 +43,10 @@ def plot_size_threads_time(rep, iter_num):
                         quotechar='|', quoting=csv.QUOTE_MINIMAL)
                 spamwriter.writerow([size, thread, output])
 
+def plot_size_threads_time():
+    pass
 
-def plot_threads_time(size, rep, iter_num):
+def run_threads_time(size, rep, iter_num):
     threads = [1, 2, 4, 8, 16, 32, 64]
     for thread in threads:
         output = run_code('{} {} {}'.format(str(size), iter_num, thread), rep)
@@ -44,6 +55,8 @@ def plot_threads_time(size, rep, iter_num):
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow([size, thread, output])
 
+def plot_threads_time():
+    pass
 
 def run_code(args, rep):
     start_time = time.time()
@@ -61,6 +74,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--iter", action="store", help="Number of iters, default 10")
 
+    parser.add_argument("--plot", action="store_true", help="Run the appropriate plotting function")
     parser.add_argument("--tt", action="store_true", help="Runs the threads to time run")
     parser.add_argument("--st", action="store_true", help="Runs the size to time run")
     parser.add_argument("--stt", action="store_true", help="Runs the threads to size to time run")
@@ -88,16 +102,19 @@ if __name__ == "__main__":
             exit(1)
 
     if args.tt == True:
-        with open('tt.csv', 'w+', newline='') as csvfile:
-            pass
-        plot_threads_time(args.size, rep, iter_num)
+        if (args.plot == True):
+            plot_threads_time()
+        else:
+            run_threads_time(args.size, rep, iter_num)
     
     if args.st == True:
-        with open('st.csv', 'w+', newline='') as csvfile:
-            pass
-        plot_size_time(rep, thread, iter_num)
+        if (args.plot == True):
+            plot_size_time()
+        else:
+            run_size_time(rep, thread, iter_num)
     
     if args.stt == True:
-        with open('stt.csv', 'w+', newline='') as csvfile:
-            pass
-        plot_size_threads_time(rep, iter_num)
+        if (args.plot == True):
+            plot_size_threads_time()
+        else:
+            run_size_threads_time(rep, iter_num)
