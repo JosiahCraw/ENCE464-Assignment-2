@@ -9,14 +9,17 @@
 \usepackage{import}
 \usepackage{chemformula}
 \usepackage{xcolor}
-\usepackage{pgf}
 \usepackage{float}
 \usepackage{tabto}
-\usepackage{subcaption}
 \usepackage{tikz}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage[section]{placeins}
 \usepackage{booktabs}
 \usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{tikzscale}
+\usepackage{pgfplots}
 \usepackage{array}
 \usepackage{gensymb}
 \usepackage{array}
@@ -51,20 +54,75 @@ width=2cm, draw=black]
 % Beginning of the report
 \setcounter{page}{1}
 \section{Introduction}
+Optimisation of algorithms and programs is important for increasing data throughput and
+minimising computation time. For an implementation on a modern computer, the large CPU caches and multiple CPU cores
+of modern processors are able to be utilised to increase the computational speeds of algorithms. The task for this
+assignment was to optimise a Jacobi relaxation algorithm for use on a modern computer system, such that the
+computational time to complete this process was minimised. The Jacobi relaxation is an iterative algorithm that 
+is used to approximate solutions for various differential equations. For our application, this involved solving the 
+discrete form of Poisson’s equation by repeatedly iterating over a 3D array. Program optimisation was achieved through 
+the use of multithreading, cache optimisations, and compiler optimisations. Section 2 presents the overall design and 
+implementation of these optimisations. The testing architecture is outlined in Section 3, before the results of the 
+optimisations are presented. The results are analysed in Section 4, where the effectiveness of each optimisation is 
+explored. Finally, conclusions are drawn in Section 5.
 
 \section{Design}
+Multithreading was implemented by slicing the 3D array along the z-axis and allocating each thread one slice to
+operate on. This slicing of the 3D array can be visualised in Figure \ref{fig:block-design} below, which shows an
+example of how the 3D array would be shared amongst four threads. This method of implementation was chosen as
+each slice of memory is contiguous, allowing each CPU core cache to access the array row-wise. The spatial locality
+created by this implementation allows the cache to quickly access memory for use by its CPU core.
 
 \begin{figure}[H]
-    \centering
-    \input{fig/tt.pgf}
-    \caption{Number of threads to computation time}
+    \begin{center}
+        \includegraphics[width=0.3\textwidth]{fig/blocks.png}
+        \caption{The slicing of the z-axis to divide the array between multiple threads; four in this case.}
+        \label{fig:block-design}
+    \end{center}
 \end{figure}
 
+One problem that arose was the need to synchronise all threads at the end of each iteration of the Jacobi relaxation.
+This was achieved through the use of thread barriers at the end of each iteration. The thread barrier blocks each
+thread from continuing until all threads have hit the barrier, at which point the barrier releases all the threads
+simultaneously. This synchronises all threads at the end of each iteration.
+
+\section{Results}
+
+\subsection{Testing Architecture}
+The system used for the testing and benchmarking of the designed algorithm contained an Intel i7-8700 CPU and
+32GB of DDR4 RAM operating at 2666MHz. The Intel i7-8700 contains six CPU cores and 12 CPU threads, which operate
+at a base clock speed of 3.2GHz and can boost to 4.3GHz on all six cores. 
+
+This processor utilises a split L1 cache, with each CPU core containing 32 KiB of L1i cache for storing instructions,
+and 32 KiB of L1d cache for storing data. This combines to give the hexa-core processor 192 KiB of L1i cache and
+192 KiB of L1d cache, for a total of 384 KiB of L1 cache. Additionally, each CPU core has access to 256 KiB of L2
+cache, combining for a total of 1.5 MiB of L2 cache. Finally, there are 12 MiB of L3 cache which is shared among
+all CPU cores.  All of these caches operate with a write-back write policy. The L1 cache is 8-way associative, the
+L2 cache is 4-way associative, and the L3 cache is 16-way associative.
+
 \begin{figure}[H]
-    \centering
-    \input{fig/st.pgf}
-    \caption{Number of threads to computation time}
+    
 \end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \begin{adjustbox}{width=\textwidth}
+        \input{fig/st.pgf}
+        \end{adjustbox}
+        \caption{Number of threads to computation time}
+        \label{fig:st}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \begin{adjustbox}{width=\textwidth}
+        \input{fig/tt.pgf}
+        \end{adjustbox}
+        \caption{Number of threads to computation time}
+        \label{fig:tt}
+    \end{subfigure}
+    \caption{Computation comparisons to threads and size, each repeated 10 times and averaged with 100 iterations}
+\end{figure}
+
 
 \begin{figure}[H]
     \centering
@@ -72,15 +130,74 @@ width=2cm, draw=black]
     \caption{Number of threads to computation time}
 \end{figure}
 
-\section{Results}
 
 \section{Analysis}
 
 \subsection{Cache}
+The first improvement to the spacial and temporal locality of the cache was the reordering of the loops from the naive approach.
+The original code had loop access in the order x, z, y reordering this resulted in many cache misses as the memory access is not contiguous.
+This resulted in a large speed improvement with the naive approach taking 18m31.760s for a size of 501 and 100 iterations, the reordered approach
+had a time of 3m16.929s. The Naive approach had far more cache misses when compared to the final solution Table \ref{table:cache}.
+
+\begin{table}[H]
+    \centering
+    \caption{Cache Misses for each version of the poisson test at a size of 301 with 10 iterations}
+    \label{table:cache}
+    \begin{tabular}{ | m{4cm} | m{2cm} | m{2cm} | m{2cm} | m{2cm} | }
+        \hline
+        & Naive & Reordered & Unswitched & Final\\
+        \hline
+        I1 Miss Rate (\%) & 0.00 & 0.00 & 0.00 & 0.00 \\
+        \hline
+        LLi Miss Rate (\%) & 0.00 & 0.00 & 0.00 & 0.00\\
+        \hline
+        D1 Miss Rate (\%) & 1.0 & 1.2 & 6.2 & 0.9\\
+        \hline
+        LLd Miss Rate (\%) & 0.7 & 0.8 & 4.0 & 0.7\\
+        \hline
+        LL Miss Rate (\%) & 0.2 & 0.3 & 1.3 & 0.3\\
+        \hline
+        
+    \end{tabular}
+\end{table}
 
 \subsection{Threading}
 
 \subsection{Optimisation}
+The results in Table \ref{table:opt} show the time taken to perform 100 iterations of an array of size N=501,
+utilising 32 threads. The size of the program is also shown, as compiler optimisation levels such as -O3 perform
+optimisations such as loop unrolling which can increase the program size. The results clearly show that the
+different optimisation levels do not reduce the program runtime by any significant amount; nor do they change
+the program size. These results were unexpected, as it was anticipated that increasing the optimisation levels
+would reduce the program runtime. Similarly, the program size also did not increase as expected. This could be
+because of loop unswitching that was optimised within the programs C source code removing the largest optimisation
+for the compiler. This could mean that remaining optimisations have a minimal effect, and could be easily
+obscured by runtime variation. 
+
+\begin{table}[H]
+    \centering
+    \caption{Speed and file size of different compiler optimisations at N=501 with 100 iterations}
+    \label{table:opt}
+    \begin{tabular}{ | m{4cm} | m{3cm} | m{3cm} | }
+        \hline
+        \textbf{GCC Flag} & \textbf{Time} & \textbf{Binary Size}\\
+        \hline
+        None & 26.966 & 61.1KiB\\
+        \hline
+        \texttt{-O1} & 26.873 & 61.1KiB\\
+        \hline
+        \texttt{-O2} & 26.871 & 61.1KiB\\
+        \hline
+        \texttt{-O3} & 26.924 & 61.1KiB\\
+        \hline
+        \texttt{-Os} & 26.952 & 61.1KiB\\
+        \hline
+        \texttt{-Og} & 26.878 & 61.1KiB\\
+        \hline
+        \texttt{-Ofast} & 26.840 & 61.1KiB\\
+        \hline
+    \end{tabular}
+\end{table}
 
 \subsection{Profiling}
 

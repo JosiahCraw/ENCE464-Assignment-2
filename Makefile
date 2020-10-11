@@ -1,4 +1,4 @@
-CFLAGS = -O3 -std=gnu99 -Wall -g3
+CFLAGS = -Ofast -std=gnu99 -Wall -g3 -pg
 CLIB = -lpthread
 
 default: build_timed
@@ -44,4 +44,4 @@ run_remote_test: build_timed
 	@echo Finished Running Remote Test!
 
 clean:
-	rm comp_test poisson_test timed_test
+	rm comp_test poisson_test timed_test || true
