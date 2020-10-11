@@ -44,11 +44,7 @@ def plot_size_time(save, src):
         })
 
     mp.figure(3)
-    mp.plot(size_time[0][:8], size_time[2][:8], label='Reorder')
-    mp.plot(size_time[0][8:16], size_time[2][8:16], label='Unswitched')
-    mp.plot(size_time[0][16:24], size_time[2][16:24], label='Final')
-    mp.plot(size_time[0][24:], size_time[2][24:], label='Naive')
-    mp.legend()
+    mp.plot(size_time[0], size_time[2])
     mp.xlabel("Dimension Size")
     mp.ylabel("Time (s)")
     mp.title("Computation Time to dimension size")
