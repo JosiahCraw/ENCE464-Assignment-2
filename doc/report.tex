@@ -70,8 +70,8 @@ explored. Finally, conclusions are drawn in Section 5.
 
 \subsection{For Loop Reordering}
 One of the largest problems with the supplied demo algorithm was the non-contiguous access of memory. The nested for
-loop order went from y, to z, to x, which is inefficient due to the cache wanting to access memory locations close to
-the last accessed. To mitigate this, all nested for loops were rearranged to the order z, to y, to x.
+loop order went y, z, x, which is inefficient due to the cache wanting to access memory locations close to
+the last memory location accessed. To mitigate this, all nested for loops were rearranged to the order z, y, x.
 
 \subsection{Threading Implementation}
 Multithreading was implemented by slicing the 3D array along the z-axis and allocating each thread one slice to operate on.
@@ -115,7 +115,7 @@ L2 cache is 4-way associative, and the L3 cache is 16-way associative.
         \begin{adjustbox}{width=\textwidth}
         \input{fig/st.pgf}
         \end{adjustbox}
-        \caption{Number of threads to computation time}
+        \caption{Computation time against dimension size}
         \label{fig:st}
     \end{subfigure}
     \begin{subfigure}[b]{0.45\textwidth}
@@ -134,6 +134,7 @@ L2 cache is 4-way associative, and the L3 cache is 16-way associative.
     \centering
     \input{fig/stt.pgf}
     \caption{Number of threads to computation time}
+    \label{fig:speed2}
 \end{figure}
 
 \begin{figure}
@@ -150,8 +151,8 @@ L2 cache is 4-way associative, and the L3 cache is 16-way associative.
 
 \subsection{Cache}
 The first improvement to the spacial and temporal locality of the cache was the reordering of the loops from the naive approach.
-The original code had loop access in the order x, z, y reordering this resulted in many cache misses as the memory access is not contiguous.
-This resulted in a large speed improvement with the naive approach taking 18m31.760s for a size of 501 and 100 iterations, the reordered approach
+The original code had loop access in the order x, z, y. This resulted in many cache misses as the memory access is not contiguous.
+Reordering this resulted in a large speed improvement with the naive approach taking 18m31.760s for a size of 501 and 100 iterations, and the reordered approach
 had a time of 3m16.929s. The Naive approach had far more cache misses when compared to the final solution Table \ref{table:cache}.
 
 \begin{table}[H]
@@ -177,7 +178,7 @@ had a time of 3m16.929s. The Naive approach had far more cache misses when compa
 \end{table}
 
 \subsection{Threading}
-The results in Figure \ref{fig:speed} show how the use of multiple threads reduces the computation time of the Jacobi relaxation.
+The results in Figures \ref{fig:speed} and \ref{fig:speed2} show how the use of multiple threads reduces the computation time of the Jacobi relaxation.
 The runtime of the algorithm drops quickly as more threads are added, showing how the algorithm is making good use
 of the CPUs multiple cores and processing threads. Interestingly, the runtime of the program continues to decrease
 as the number of program threads passes the maximum number of CPU threads; even up to 256 program threads. This may
