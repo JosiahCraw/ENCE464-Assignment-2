@@ -33,11 +33,7 @@ def plot_size_time(save, src):
     else:
         size_time = genfromtxt('st.csv', delimiter=' ')
     size_time = np.transpose(size_time)
-    mp.figure(3)
-    mp.plot(size_time[0], size_time[2])
-    mp.xlabel("Dimension Size")
-    mp.ylabel("Time (s)")
-    mp.title("Computation Time to dimension size")
+    
     if save != None:
         matplotlib.use("pgf")
         matplotlib.rcParams.update({
@@ -46,6 +42,17 @@ def plot_size_time(save, src):
             'text.usetex': True,
             'pgf.rcfonts': False,
         })
+
+    mp.figure(3)
+    mp.plot(size_time[0][:8], size_time[2][:8], label='Reorder')
+    mp.plot(size_time[0][8:16], size_time[2][8:16], label='Unswitched')
+    mp.plot(size_time[0][16:24], size_time[2][16:24], label='Final')
+    mp.plot(size_time[0][24:], size_time[2][24:], label='Naive')
+    mp.legend()
+    mp.xlabel("Dimension Size")
+    mp.ylabel("Time (s)")
+    mp.title("Computation Time to dimension size")
+    if save != None:
         if save[-1] != '/':
             mp.savefig('{}/st.pgf'.format(save))
         else:
@@ -75,6 +82,15 @@ def plot_size_threads_time(save, src):
         data = genfromtxt('stt.csv', delimiter=' ')
     data = np.transpose(data)
 
+    if save != None:
+        matplotlib.use("pgf")
+        matplotlib.rcParams.update({
+            "pgf.texsystem": "pdflatex",
+            'font.family': 'serif',
+            'text.usetex': True,
+            'pgf.rcfonts': False,
+        })
+
     fig = mp.figure()
     ax = fig.gca(projection='3d')
     ax.view_init(30, 130)
@@ -85,13 +101,6 @@ def plot_size_threads_time(save, src):
     surf = ax.plot_trisurf(data[0], data[1], data[2], cmap=cm.jet, linewidth=0.1)
     # fig.colorbar(surf, shrink=0.5, aspect=5)
     if save != None:
-        matplotlib.use("pgf")
-        matplotlib.rcParams.update({
-            "pgf.texsystem": "pdflatex",
-            'font.family': 'serif',
-            'text.usetex': True,
-            'pgf.rcfonts': False,
-        })
         if save[-1] != '/':
             mp.savefig('{}/stt.pgf'.format(save))
         else:
@@ -127,6 +136,7 @@ def plot_threads_time(save, src):
             'text.usetex': True,
             'pgf.rcfonts': False,
         })
+
     mp.figure(2)
     mp.plot(threads_time[1], threads_time[2])
     mp.xlabel("Thread Number")

@@ -1,7 +1,7 @@
 \documentclass[12pt]{article}
 \usepackage{graphicx}
 \usepackage[section]{placeins}
-\usepackage[a4paper, total={6in, 9in}]{geometry}
+\usepackage[a4paper, total={6.5in, 10in}]{geometry}
 \usepackage{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -67,15 +67,22 @@ optimisations are presented. The results are analysed in Section 4, where the ef
 explored. Finally, conclusions are drawn in Section 5.
 
 \section{Design}
-Multithreading was implemented by slicing the 3D array along the z-axis and allocating each thread one slice to
-operate on. This slicing of the 3D array can be visualised in Figure \ref{fig:block-design} below, which shows an
-example of how the 3D array would be shared amongst four threads. This method of implementation was chosen as
-each slice of memory is contiguous, allowing each CPU core cache to access the array row-wise. The spatial locality
-created by this implementation allows the cache to quickly access memory for use by its CPU core.
+
+\subsection{For Loop Reordering}
+One of the largest problems with the supplied demo algorithm was the non-contiguous access of memory. The nested for
+loop order went from y, to z, to x, which is inefficient due to the cache wanting to access memory locations close to
+the last accessed. To mitigate this, all nested for loops were rearranged to the order z, to y, to x.
+
+\subsection{Threading Implementation}
+Multithreading was implemented by slicing the 3D array along the z-axis and allocating each thread one slice to operate on.
+This slicing of the 3D array can be visualised in Figure \ref{fig:block-design} below, which shows an example of how the 3D array
+would be shared amongst four threads. This method of implementation was chosen as each slice of memory is contiguous,
+allowing each CPU core cache to access the array row-wise. The spatial locality created by this implementation allows
+the cache to quickly access memory for use by its CPU core.
 
 \begin{figure}[H]
     \begin{center}
-        \includegraphics[width=0.3\textwidth]{fig/blocks.png}
+        \includegraphics[width=0.25\textwidth]{fig/blocks.png}
         \caption{The slicing of the z-axis to divide the array between multiple threads; four in this case.}
         \label{fig:block-design}
     \end{center}
@@ -100,20 +107,18 @@ cache, combining for a total of 1.5 MiB of L2 cache. Finally, there are 12 MiB o
 all CPU cores.  All of these caches operate with a write-back write policy. The L1 cache is 8-way associative, the
 L2 cache is 4-way associative, and the L3 cache is 16-way associative.
 
-\begin{figure}[H]
-    
+\begin{figure}
 \end{figure}
-
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
         \begin{adjustbox}{width=\textwidth}
         \input{fig/st.pgf}
         \end{adjustbox}
         \caption{Number of threads to computation time}
         \label{fig:st}
     \end{subfigure}
-    \begin{subfigure}[b]{0.48\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
         \begin{adjustbox}{width=\textwidth}
         \input{fig/tt.pgf}
         \end{adjustbox}
@@ -121,6 +126,7 @@ L2 cache is 4-way associative, and the L3 cache is 16-way associative.
         \label{fig:tt}
     \end{subfigure}
     \caption{Computation comparisons to threads and size, each repeated 10 times and averaged with 100 iterations}
+    \label{fig:speed}
 \end{figure}
 
 
@@ -128,6 +134,15 @@ L2 cache is 4-way associative, and the L3 cache is 16-way associative.
     \centering
     \input{fig/stt.pgf}
     \caption{Number of threads to computation time}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{adjustbox}{width=0.6\textwidth}
+    \input{fig/st-comp.pgf}
+    \end{adjustbox}
+    \caption{A comparison of the different versions of the program}
+    \label{fig:comp}
 \end{figure}
 
 
@@ -147,7 +162,7 @@ had a time of 3m16.929s. The Naive approach had far more cache misses when compa
         \hline
         & Naive & Reordered & Unswitched & Final\\
         \hline
-        I1 Miss Rate (\%) & 0.00 & 0.00 & 0.00 & 0.00 \\
+        I1 Miss Rate (\%) & 0.00 & 0.00 & 0.00 & 0.00\\
         \hline
         LLi Miss Rate (\%) & 0.00 & 0.00 & 0.00 & 0.00\\
         \hline
@@ -162,6 +177,13 @@ had a time of 3m16.929s. The Naive approach had far more cache misses when compa
 \end{table}
 
 \subsection{Threading}
+The results in Figure \ref{fig:speed} show how the use of multiple threads reduces the computation time of the Jacobi relaxation.
+The runtime of the algorithm drops quickly as more threads are added, showing how the algorithm is making good use
+of the CPUs multiple cores and processing threads. Interestingly, the runtime of the program continues to decrease
+as the number of program threads passes the maximum number of CPU threads; even up to 256 program threads. This may
+be because the z-slices are closer together and the program allocates threads from the top down. This would mean
+the L3 cache is filled with data from near the start of the 3D array instead of data from further down,
+improving contiguous data accesses from memory.
 
 \subsection{Optimisation}
 The results in Table \ref{table:opt} show the time taken to perform 100 iterations of an array of size N=501,
@@ -200,8 +222,34 @@ obscured by runtime variation.
 \end{table}
 
 \subsection{Profiling}
+The Perf Linux utility was used to profile the different code revisions at a size of 301 with 10 iterations, the tasks with the largest overheads are
+listed in Table \ref{table:perf}
+
+\begin{table}[H]
+    \centering
+    \caption{The biggest tasks for each code version}
+    \label{table:perf}
+    \begin{tabular}{ | m{1.5cm} | m{4cm} | m{6cm} | m{3.5cm} | }
+        \hline
+        Version & Task 1 (Overhead) & Task 2 (Overhead) & Task 3 (Overhead)\\
+        \hline
+        Final & \texttt{poisson\_mid\_task} (93.16\%) & \texttt{poisson\_top\_task} (3.16\%) & \texttt{poisson\_bot\_task} (3.02\%)\\
+        \hline
+        Naive & \texttt{poisson\_dirichlet} (99.13\%) & \texttt{\_\_memmove\_avx\_unaligned\_erms} (0.65\%) & -\\
+        \hline
+        Reorder & \texttt{poisson\_dirichlet} (95.89\%) & \texttt{\_\_memmove\_avx\_unaligned\_erms} (3.56\%) & -\\
+        \hline
+        Reorder & \texttt{poisson\_dirichlet} (95.59\%) & \texttt{\_\_memmove\_avx\_unaligned\_erms} (3.84\%) & -\\
+        \hline
+    \end{tabular}
+\end{table}
 
 \section{Conclusion}
+The optimisation of a Jacobi relaxation algorithm has taken place in order to minimise the runtime of the algorithm
+on a modern computer system. This optimisation process has employed multithreading and cache optimisations to
+minimise the runtime of the algorithm. These two optimisation areas created the biggest decreases in runtime out
+of any other optimisations. Surprisingly, compiler optimisations made little difference to both the runtime and
+the size of the program.
 
 \newpage
 \medskip
