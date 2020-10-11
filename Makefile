@@ -1,4 +1,4 @@
-CFLAGS = -Ofast -std=gnu99 -Wall -g3
+CFLAGS = -Ofast -std=gnu99 -Wall -g3 -pg
 CLIB = -lpthread
 
 default: build_timed
