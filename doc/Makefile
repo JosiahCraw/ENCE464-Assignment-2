@@ -1,9 +1,9 @@
-all: instructions.pdf figures report
+all: instructions.pdf report
 
 figures:
 	python ../test/scripts/time.py --tt --st --stt --plot --save fig --data ../data
 
-report:
+report: figures
 	latexmk -pdf report.tex
  
 %.pdf: %.tex
