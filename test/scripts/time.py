@@ -55,7 +55,7 @@ def plot_size_time(save, src):
 
 
 def run_size_threads_time(rep, iter_num):
-    threads = [1, 2, 4, 8, 16, 32, 64, 128, 256]
+    threads = [4, 8, 16, 32, 64, 128, 256]
     for size in SIZES:
         for thread in threads:
             output = run_code('{} {} {}'.format(str(size), iter_num, thread), rep)
@@ -77,8 +77,13 @@ def plot_size_threads_time(save, src):
 
     fig = mp.figure()
     ax = fig.gca(projection='3d')
+    ax.view_init(30, 130)
+    ax.set_xlabel("Dimension Size")
+    ax.set_ylabel("Threads")
+    ax.set_zlabel("Time (s)")
+    ax.set_title("Overall Speed Analysis")
     surf = ax.plot_trisurf(data[0], data[1], data[2], cmap=cm.jet, linewidth=0.1)
-    fig.colorbar(surf, shrink=0.5, aspect=5)
+    # fig.colorbar(surf, shrink=0.5, aspect=5)
     if save != None:
         matplotlib.use("pgf")
         matplotlib.rcParams.update({

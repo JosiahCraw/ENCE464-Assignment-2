@@ -1,8 +1,7 @@
 CFLAGS = -O3 -std=gnu99 -Wall -g3
 CLIB = -lpthread
 
-default: src/poisson.c
-	gcc $(CFLAGS) -o poisson_test $^ $(CLIB)
+default: build_timed
 
 all: quick_test
 
