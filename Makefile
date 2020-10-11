@@ -1,7 +1,10 @@
-all: quick_test
-
 CFLAGS = -O3 -std=gnu99 -Wall -g3
 CLIB = -lpthread
+
+default: src/poisson.c
+	gcc $(CFLAGS) -o poisson_test $^ $(CLIB)
+
+all: quick_test
 
 build: test/poisson_test.c test/example/demo_poisson.c src/poisson.c
 	gcc $(CFLAGS) -o poisson_test $^ -lcrypto -lssl $(CLIB)

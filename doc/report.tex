@@ -6,8 +6,10 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{fancyhdr}
+\usepackage{import}
 \usepackage{chemformula}
 \usepackage{xcolor}
+\usepackage{pgf}
 \usepackage{float}
 \usepackage{tabto}
 \usepackage{subcaption}
@@ -37,7 +39,7 @@ width=2cm, draw=black]
 \tikzstyle{line} = [thick, -, >=stealth]
 \tikzstyle{arrow} = [thick, ->, >=stealth]
 
-\author{\LARGE Josiah Craw (35046080)\vspace{1cm}\\\LARGE Ryan Adams (xxxxxxxx)\vspace{1cm}\\}
+\author{\LARGE Josiah Craw (35046080)\vspace{1cm}\\\LARGE Ryan Adams (49739800)\vspace{1cm}\\}
 \title{\rule{\textwidth}{0.8pt} \\ {\huge \textbf{\reportTitle}}\\{\large \subTitle} \rule{\textwidth}{0.8pt}}
 
 \begin{document}
@@ -47,9 +49,28 @@ width=2cm, draw=black]
 \newpage
 
 % Beginning of the report
+\setcounter{page}{1}
 \section{Introduction}
 
 \section{Design}
+
+\begin{figure}[H]
+    \centering
+    \input{fig/tt.pgf}
+    \caption{Number of threads to computation time}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \input{fig/st.pgf}
+    \caption{Number of threads to computation time}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \import{fig/}{stt.pgf}
+    \caption{Number of threads to computation time}
+\end{figure}
 
 \section{Results}
 

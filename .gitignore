@@ -6,3 +6,4 @@ comp_test
 *.o
 *.out
 *.pdf
+*.pgf
